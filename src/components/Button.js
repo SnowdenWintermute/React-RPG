@@ -8,7 +8,7 @@ class Button extends Component {
   }
   render() {
     return (
-      <button className="btn" onClick={this.sendToParent}>{this.props.name}</button>
+      <button onClick={this.sendToParent}>{this.props.name}</button>
     );
   }
 }

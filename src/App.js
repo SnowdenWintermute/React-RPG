@@ -18,14 +18,15 @@ class App extends Component {
     super(props);
     this.state={
       newGame:true,
+      battleState:{inCombat:false,treasureRoom:false,stairs:true,timesExplored:0,dlvl:1},
       menuPage:0,
       lootMenu:0,
       playerClass:"",
       playerStats: {lvl: 1, hp: 0, maxHp: 0, mp: 0, maxMp: 0, baseDmg: 0,tDmg: 0},
-      enemyStats: {hp:10, maxHp: 10, mp: 2, maxMp: 6, baseDmg:2},
+      enemyStats: {hp:0, maxHp: 0, mp: 2, maxMp: 6, baseDmg:2,difficulty:0},
+      enemyType: {},
+      enemyMoves: {},
       exp: 0,
-      explorations: 0,
-      dlvl: 0,
       //Equipment
       equipmentStats: {dmg:0,def:0,str:0,dex:0,int:0},
       mainHand: {dmg: 0, def: 0, str: 0, dex: 0, int: 0},
@@ -52,8 +53,31 @@ class App extends Component {
     this.fullHealth = this.fullHealth.bind(this)
   }
 
-//Calculates player stats from their equipment
-  calculateStats = function(){
+//Calculates player stats from their equipment. If heal is true, fully heals player
+  createEnemy = function(dlvl){
+    let enemyStats = this.state.enemyStats;
+    let rType = this.getRandomInt(1,4);
+    let rDifficulty = this.getRandomInt(1,7);
+    enemyStats.difficulty = rDifficulty;
+    let maxHp = (this.state.battleState.dlvl * 2) + 3
+    enemyStats.maxHp = maxHp
+    switch(true){
+      case rType === 1:
+      this.setState({enemyType:"Warrior"})
+      enemyStats.maxHp += rDifficulty
+      break
+      case rType === 2:
+      this.setState({enemyType:"Rogue"})
+      break
+      case rType === 3:
+      this.setState({enemyType:"Mage"})
+      break
+      default://nothing
+    }
+    enemyStats.hp = maxHp
+    this.setState({enemyStats})
+  }
+  calculateStats = function(heal){
     let playerClass = this.state.playerClass;
     let lvl = this.state.playerStats.lvl;
     let hp = this.state.playerStats.hp;
@@ -83,6 +107,9 @@ class App extends Component {
     let maxHp = str +(lvl * 2 + 5);
     let maxMp = int +(lvl * 2 + 2);
     equipmentStats = {dmg:wDmg,def:def,str:str,dex:dex,int:int}
+    if(heal){
+      hp = maxHp
+    }
     let playerStats = {lvl: lvl, hp: hp, maxHp: maxHp, mp: mp, maxMp: maxMp, baseDmg: baseDmg, tDmg: tDmg}
     this.setState((prevState)=>{return{equipmentStats}})
     this.setState((prevState)=>{return{playerStats}})
@@ -107,17 +134,14 @@ class App extends Component {
       case playerClass==="Warrior":
       mainHand = {dmg: 1, def: 0, str: 1, dex: 0, int: 0}
       head = {def:1,str:1,dex:0,int:0}
-      ring = {str:2,dex:0,int:0}
       break
       case playerClass==="Rogue":
       mainHand = {dmg: 1, def: 0, str: 0, dex: 1, int: 0}
       head = {def:1,str:0,dex:1,int:0}
-      ring = {str:0,dex:2,int:0}
       break
       case playerClass==="Mage":
       mainHand = {dmg: 1, def: 0, str: 0, dex: 0, int: 1}
       head = {def:1,str:0,dex:0,int:1}
-      ring = {str:0,dex:0,int:2}
       break
       default:
       //nothing
@@ -185,6 +209,12 @@ class App extends Component {
       //nothing
     }
   }
+  //make random int
+  getRandomInt = function(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
   //Handle the Buttons
   handleClick = function(buttonName){
     switch(true){
@@ -205,8 +235,41 @@ class App extends Component {
       case buttonName==="Start":
         this.setState((prevState)=>{return{newGame:false}});
         console.log("startbutton "+JSON.stringify(this.state.playerStats))
-        this.calculateStats()
+        this.calculateStats(true)
         //this.fullHealth()
+        break
+      case buttonName==="Explore":
+        let battleState = this.state.battleState;
+        let r = 0;
+        battleState.timesExplored ++
+        //get random room
+        if(battleState.timesExplored<3){
+        r = this.getRandomInt(1,6);
+        console.log(r)
+        }
+        if(battleState.timesExplored>=3){
+          r = this.getRandomInt(1,7);
+          console.log(r)
+        }
+        if(r===1||r===2||r===3){ //battle
+          let enemyStats=this.state.enemyStats;
+          this.createEnemy()
+          this.setState({enemyStats})
+          battleState.inCombat=true;
+          battleState.stairs=false;
+          battleState.treasureRoom=false;
+        }
+        if(r===4||r===5){ //treasure
+          battleState.inCombat=false;
+          battleState.stairs=false;
+          battleState.treasureRoom=true;
+        }
+        if(r===6){ //stairs
+          battleState.inCombat=false;
+          battleState.stairs=true;
+          battleState.treasureRoom=false;
+        }
+        this.setState({battleState})
         break
       case buttonName==="Test":
       console.log(this.state.playerStats)
@@ -230,28 +293,27 @@ class App extends Component {
       </div>
     )
     //Menu Page 1
-    if(this.state.menuPage===0)
+    if(this.state.menuPage===0) //Menu Page 1
     return (
       <div className="App">
         <div className="grid-container">
         <CharPic hp={this.state.playerStats.hp} handleClick={this.handleClick}/>
         <MoveAnimation log={this.state.combatLog} handleClick={this.handleClick} />
-        <EnemyPic hp={this.state.enemyStats.hp} />
+        <EnemyPic handleClick={this.handleClick} enemyStats={this.state.enemyStats} battleState={this.state.battleState} enemyType={this.state.enemyType}/>
         <Items />
         <MoveList handleClick={this.handleClick}/>
         <Loot />
         </div>
       </div>)
-
-      //Menu Page 2
-    if(this.state.menuPage===1)
+    //Menu Page 2
+    if(this.state.menuPage===1) //Menu Page 2
       return(
         <div className="App">
         <div className="grid-container">
         <Equipment  handleClick={this.handleClick} mainHand={this.state.mainHand} offHand={this.state.offHand} head={this.state.head} body={this.state.body} ring={this.state.ring}/>
         <PlayerStats stats={this.state.playerStats} eq={this.state.equipmentStats} playerClass={this.state.playerClass}/>
-        <EnemyStats stats={this.state.enemyStats}/>
-        <Items />
+        <EnemyStats enemyStats={this.state.enemyStats} type={this.props.enemyType} battleState={this.state.battleState}/>
+        <Items handleClick={this.handleClick}/>
         <MoveList handleClick={this.handleClick}/>
         <Loot />
         </div>

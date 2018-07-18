@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Button from './Button'
 import InventoryItem from './InventoryItem'
 
 class Items extends Component {
@@ -7,7 +6,7 @@ class Items extends Component {
     return (
       <div className="menuBox" id="items">
         Items
-        <InventoryItem />
+        <InventoryItem handleClick={this.props.handleClick} />
       </div>
     );
   }
