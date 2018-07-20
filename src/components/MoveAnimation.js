@@ -5,7 +5,6 @@ class MoveAnimation extends Component {
   render() {
     return (
       <div className="menuBox" id="moveAnimation">
-        Combat Log
         <Button name="Clear Log" key="eq" handleClick={this.props.handleClick}/>
         <textarea
         id="combatLog"

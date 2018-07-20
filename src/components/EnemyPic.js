@@ -8,10 +8,17 @@ const drawHpBar=function(hp){
   }
   return hpBars;
 }
-
+const drawMpBar=function(mp){
+  let mpBars = [];
+  for(let i=0;i<mp;i++){
+    mpBars.push(<div className="mpTick" key={i.toString()}></div>);
+  }
+  return mpBars;
+}
 class EnemyPic extends Component {
   render() {
     const hp = this.props.enemyStats.hp;
+    const mp = this.props.enemyStats.mp;
     if(this.props.battleState.stairs){
       return(
         <div className="menuBox" id="stairs">
@@ -34,9 +41,12 @@ class EnemyPic extends Component {
       <Button name="_" id="blankButton" handleClick={this.props.handleClick} />
         <p>Battle!</p>
         <p>Enemy: {this.props.enemyType} </p>
-        <p>HP: {this.props.enemyStats.hp}</p>
+        <p>HP: {this.props.enemyStats.hp}/{this.props.enemyStats.maxHp}</p>
         <div className="hpBar">
         {drawHpBar(hp)}
+        </div>
+        <div className="hpBar">
+        {drawMpBar(mp)}
         </div>
       </div>
     )};
@@ -45,10 +55,11 @@ class EnemyPic extends Component {
       <div className="menuBox" id="EnemyPic">
         <Button name="Explore" id="explore" handleClick={this.props.handleClick} />
         <p>Enemy Defeated!</p>
-        <p>Enemy HP{this.props.enemyStats.hp}</p>
-        <br/>
         <div className="hpBar">
         {drawHpBar(hp)}
+        </div>
+        <div className="hpBar">
+        {drawMpBar(mp)}
         </div>
       </div>
     )};

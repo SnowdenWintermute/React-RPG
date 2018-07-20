@@ -23,7 +23,7 @@ class App extends Component {
       lootMenu:0,
       playerClass:"",
       playerStats: {lvl: 1, hp: 0, maxHp: 0, mp: 0, maxMp: 0, baseDmg: 0,tDmg: 0},
-      enemyStats: {hp:0, maxHp: 0, mp: 2, maxMp: 6, baseDmg:2,difficulty:0},
+      enemyStats: {hp:0, maxHp: 0, mp: 0, maxMp: 0, baseDmg:0,def:0,difficulty:0, dex:0},
       enemyType: {},
       enemyMoves: {},
       exp: 0,
@@ -35,13 +35,13 @@ class App extends Component {
       body: {def: 0, str: 0, dex: 0, int: 0},
       ring: {str: 0, dex: 0, int: 0},
       inventory: {
-        inv1: {},
-        inv2: {},
-        inv3: {}
+        inv1: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
+        inv2: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
+        inv3: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
+        autoInjectors:0,
+        shards:0
     },
       itemOnGround: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
-      autoInjectors:0,
-      shards:0,
       combatLog: "",
       //GameState
       statsSet: "no"
@@ -54,26 +54,38 @@ class App extends Component {
   }
 
 //Calculates player stats from their equipment. If heal is true, fully heals player
-  createEnemy = function(dlvl){
+  createEnemy = function(){
     let enemyStats = this.state.enemyStats;
+    let battleState = this.state.battleState;
+    let dlvl = battleState.dlvl;
     let rType = this.getRandomInt(1,4);
     let rDifficulty = this.getRandomInt(1,7);
     enemyStats.difficulty = rDifficulty;
-    let maxHp = (this.state.battleState.dlvl * 2) + 3
-    enemyStats.maxHp = maxHp
+    let maxHp = (dlvl * 2) + 3
+    let maxMp = (dlvl * 1) + 3
     switch(true){
       case rType === 1:
       this.setState({enemyType:"Warrior"})
-      enemyStats.maxHp += rDifficulty
+      maxHp += rDifficulty
+      enemyStats.dex = 0
       break
       case rType === 2:
       this.setState({enemyType:"Rogue"})
+      enemyStats.dex = dlvl + rDifficulty
       break
       case rType === 3:
       this.setState({enemyType:"Mage"})
+      maxMp += rDifficulty
+      enemyStats.dex = 0
       break
       default://nothing
     }
+    //set up the stats to go out
+    enemyStats.def = dlvl + 1;
+    enemyStats.baseDmg = dlvl + 1 + rDifficulty;
+    enemyStats.maxMp = maxMp
+    enemyStats.mp = maxMp
+    enemyStats.maxHp = maxHp
     enemyStats.hp = maxHp
     this.setState({enemyStats})
   }
@@ -159,35 +171,117 @@ class App extends Component {
     }
     if(this.state.enemyStats.hp<=0){
       console.log("Monster died")
+      let enemyStats = this.state.enemyStats
+      enemyStats.mp = 0
+      this.setState({enemyStats})
       let tempLog = "Enemy defeated\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      //generate loot
+      this.createLoot()
     }
   }
-  enemyMove = function(){
-    //Calculate damage
-    const a = this.state.playerStats.hp;
-    const b = this.state.enemyStats.baseDmg;
-    const d = a-b;
-    const playerStats = this.state.playerStats;
-    playerStats.hp=d;
-    //Combat Log Message
-    let tempLog = "Enemy hits Player for "+this.state.enemyStats.baseDmg+"\n";
-    //Set message and resolve damage
-    this.setState({playerStats})
-    this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+  createLoot = function(){
+    //dlvl used to determine weapon quality
+    let dlvl = this.state.battleState.dlvl
+    //possible stats and type
+    let itemOnGround = this.state.itemOnGround
+    let type = itemOnGround.type
+    let dmg = itemOnGround.dmg
+    let def = itemOnGround.def
+    let str = itemOnGround.str
+    let dex = itemOnGround.dex
+    let int = itemOnGround.int
+    //determine stats
+    let statQuality = this.getRandomInt(1,(dlvl+1))
+    let baseQuality = this.getRandomInt(1,(dlvl+1))
+    let rStat = this.getRandomInt(1,4)
+    //Decide item Type
+    let r = this.getRandomInt(1,7)
+    switch (true) {
+      case r===1:
+        type = "1H Weapon"
+        dmg = baseQuality
+        break;
+      case r===2:
+        type ="Shield"
+        def = baseQuality
+        break;
+      case r===3:
+        type ="Helm"
+        def = baseQuality
+        break;
+      case r===4:
+        type ="Armor"
+        def = baseQuality*2
+        break;
+      case r===5:
+        type ="Ring"
+        statQuality = statQuality*2
+        break;
+      case r===6:
+        type ="Autoinjector"
+        break;
+      default:
+    }
+    //apply base stat if item is not an autoInjectors
+    if(type!=="Autoinjector"){
+    switch (true) {
+      case rStat===1:
+        str = statQuality
+        break;
+      case rStat===2:
+        dex = statQuality
+        break;
+      case rStat===3:
+        int = statQuality
+        break;
+      default:
+    }
   }
-  playerAttack = function(){
-    //Calculate damage
-    const a = this.state.enemyStats.hp;
-    const b = this.state.playerStats.tDmg;
-    const d = a-b;
-    const enemyStats = this.state.enemyStats;
-    enemyStats.hp=d;
-    //Combat Log Message
-    let tempLog = "Player hits Enemy for "+this.state.playerStats.tDmg+"\n";
-    //Set message and resolve damage
-    this.setState({enemyStats});
-    this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+    //set state
+    itemOnGround = {type: type,dmg: dmg, def: def, str: str, dex: dex, int: int}
+    this.setState({itemOnGround})
+  }
+  combat = function(playerMove,enemyMove){
+    //set up player stats
+    let playerStats = this.state.playerStats
+    let equipmentStats = this.state.equipmentStats
+    let playerHp = playerStats.hp
+    let playerMp = playerStats.mp
+    let playerDmg = playerStats.tDmg
+    let playerDef = equipmentStats.def
+    let playerDex = equipmentStats.dex
+    //Set up enemy stats
+    let enemyStats = this.state.enemyStats
+    let enemyDex = enemyStats.dex
+    let enemyHp = enemyStats.hp
+    let enemyMp = enemyStats.mp
+    let enemyDmg = enemyStats.baseDmg
+    let enemyDef = enemyStats.def
+
+    //compare dex and def
+    let enemyNetDef = (enemyDef-playerDex) < 0 ? 0 : (enemyDef-playerDex);
+    let playerNetDef = (playerDef-enemyDex) < 0 ? 0 : (playerDef-enemyDex);
+
+    //perform operations based on move selection
+    if(playerMove==="Attack"){
+      enemyHp = enemyHp + enemyNetDef - playerDmg;
+      enemyStats.hp = enemyHp;
+      let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
+      this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+    }
+    this.setState({enemyStats})
+    //Enemy's move
+    if(enemyHp>0){
+    if(enemyMove==="Attack"){
+      playerHp = playerHp + playerNetDef - enemyDmg;
+      playerStats.hp = playerHp
+      //Combat Log Message
+      let tempLog = "Enemy hits Player for "+(enemyDmg-playerNetDef)+" ("+playerNetDef+" defended)"+"\n";
+      this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+    }
+    this.setState({playerStats})
+  }
   }
 
   //Get class from start Screen
@@ -225,9 +319,13 @@ class App extends Component {
         this.setState({menuPage:0})
         break
       case buttonName==="Attack":
-        this.playerAttack();
-        this.enemyMove();
+        if(this.state.enemyStats.hp>0){
+        this.combat("Attack","Attack")
         this.resolveCombat();
+        }else{
+          let tempLog = "You take a practice swing."+"\n";
+          this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      }
         break
       case buttonName==="Clear Log":
         this.setState({combatLog: ""})
@@ -239,6 +337,8 @@ class App extends Component {
         //this.fullHealth()
         break
       case buttonName==="Explore":
+        //destroy item on ground
+        this.setState({itemOnGround:{type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0}})
         let battleState = this.state.battleState;
         let r = 0;
         battleState.timesExplored ++
@@ -275,6 +375,9 @@ class App extends Component {
       console.log(this.state.playerStats)
       this.fullHealth();
       break
+      case buttonName==="Take":
+        //function to move item
+      break
       default:
         //do nothing
     }
@@ -300,9 +403,9 @@ class App extends Component {
         <CharPic hp={this.state.playerStats.hp} handleClick={this.handleClick}/>
         <MoveAnimation log={this.state.combatLog} handleClick={this.handleClick} />
         <EnemyPic handleClick={this.handleClick} enemyStats={this.state.enemyStats} battleState={this.state.battleState} enemyType={this.state.enemyType}/>
-        <Items />
-        <MoveList handleClick={this.handleClick}/>
-        <Loot />
+        <Items handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>
+        <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats}/>
+        <Loot itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>
         </div>
       </div>)
     //Menu Page 2
@@ -312,10 +415,10 @@ class App extends Component {
         <div className="grid-container">
         <Equipment  handleClick={this.handleClick} mainHand={this.state.mainHand} offHand={this.state.offHand} head={this.state.head} body={this.state.body} ring={this.state.ring}/>
         <PlayerStats stats={this.state.playerStats} eq={this.state.equipmentStats} playerClass={this.state.playerClass}/>
-        <EnemyStats enemyStats={this.state.enemyStats} type={this.props.enemyType} battleState={this.state.battleState}/>
-        <Items handleClick={this.handleClick}/>
-        <MoveList handleClick={this.handleClick}/>
-        <Loot />
+        <EnemyStats enemyStats={this.state.enemyStats} enemyType={this.state.enemyType} battleState={this.state.battleState}/>
+        <Items handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>
+        <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats}/>
+        <Loot itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>
         </div>
         </div>
     )

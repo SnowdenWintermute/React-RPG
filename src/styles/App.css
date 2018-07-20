@@ -35,17 +35,24 @@ body{
   height:100%;
   width:100%;
 }
-#moveAnimation{
+#moveList{
 
 }
 .hpBar{
   display: flex;
   width: 200px;
+  height: 10px;
 }
 .hpTick{
   height: 10px;
   width:10px;
   background: green;
+  border: 1px solid black;
+}
+.mpTick{
+  height: 10px;
+  width:10px;
+  background: #05C;
   border: 1px solid black;
 }
 .listNoStyle{
@@ -88,6 +95,7 @@ Button:hover{
 }
  #items Button{
   width:4vw;
+  margin-left: 1vw;
 }
 #classDescriptions{
   grid-column: 2/4;
