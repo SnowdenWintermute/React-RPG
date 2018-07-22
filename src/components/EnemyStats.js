@@ -19,7 +19,7 @@ class EnemyStats extends Component {
       </li>
       <li>DEF: {this.props.enemyStats.def}
       </li>
-      <li>Armor Penetration: {this.props.enemyStats.dex}
+      <li>Armor Penetration: {Math.floor(this.props.enemyStats.dex/2)}
       </li>
       </ul>
       </div>

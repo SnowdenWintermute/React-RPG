@@ -15,6 +15,22 @@ const drawMpBar=function(mp){
   }
   return mpBars;
 }
+const makeStairButtons=function(roomsExplored,handleClick){
+  if(roomsExplored>=3){
+    return(<div><Button name="Go up" id="goUp" handleClick={handleClick}/><Button name="Go down" id="goDown" handleClick={handleClick}/></div>)
+  }
+}
+const makeTreasureButton=function(playerClass,handleClick,chestOpen){
+  if(!chestOpen){
+  if(playerClass==="Rogue"){
+    return(<Button name="Pick lock" id="pickLock" handleClick={handleClick}/>)
+  }else{
+    return(<Button name="Inject lock" id="pickLock" handleClick={handleClick}/>)
+  }
+}else{
+  return(<div>The chest opens...</div>)
+}
+}
 class EnemyPic extends Component {
   render() {
     const hp = this.props.enemyStats.hp;
@@ -23,8 +39,11 @@ class EnemyPic extends Component {
       return(
         <div className="menuBox" id="stairs">
         <Button name="Explore" id="explore" handleClick={this.props.handleClick} />
-        <p>Stairs</p>
+        <p>Stairs (3 Shards -> 1 Autoinjector)</p>
+        <p>{makeStairButtons(this.props.battleState.timesExplored,this.props.handleClick)}
+        <Button name="Trade shards" handleClick={this.props.handleClick}/></p>
         <p>Rooms explored: {this.props.battleState.timesExplored}</p>
+        <p>On this floor: {this.props.battleState.timesExploredOnCurrentFloor}</p>
         </div>
       )};
     if(this.props.battleState.treasureRoom){
@@ -32,7 +51,9 @@ class EnemyPic extends Component {
         <div className="menuBox" id="stairs">
         <Button name="Explore" id="explore" handleClick={this.props.handleClick} />
         <p>Treasure Room</p>
+        <p>{makeTreasureButton(this.props.playerClass,this.props.handleClick,this.props.chestOpen)}</p>
         <p>Rooms explored: {this.props.battleState.timesExplored}</p>
+        <p>On this floor: {this.props.battleState.timesExploredOnCurrentFloor}</p>
         </div>
       )};
     if(this.props.battleState.inCombat&&this.props.enemyStats.hp>0){

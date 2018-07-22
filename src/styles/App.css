@@ -25,6 +25,8 @@ body{
 .menuBox{
   border: 1px solid black;
   height: 40vh;
+  padding: 0;
+  margin: 0;
   width: 100%;
   height:100%;
 }
@@ -57,6 +59,9 @@ body{
 }
 .listNoStyle{
   list-style: none;
+}
+ul li {
+  margin: 0px;
 }
 textarea{
   resize: none;
@@ -93,9 +98,26 @@ Button{
 Button:hover{
   border: 2px solid white;
 }
- #items Button{
-  width:4vw;
+#invItems Button{
   margin-left: 1vw;
+  width: 3vw;
+  height: 20px;
+  padding: 0px;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+}
+#eqlist Button{
+  margin-left: 1vw;
+  width: 3vw;
+  height: 20px;
+  padding: 0px;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+}
+#stackableItems Button {
+  width: 10vw;
 }
 #classDescriptions{
   grid-column: 2/4;

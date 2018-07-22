@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 class Button extends Component {
   sendToParent = () => {
-    this.props.handleClick(this.props.name)
+    this.props.handleClick(this.props.name,this.props.itemSlot)
   }
   render() {
     return (

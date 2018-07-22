@@ -31,6 +31,13 @@ const makeButton = function(item,handleClick) {
     return(<Button name="Take" handleClick={handleClick}/>)
   }
 }
+const makeDismantleButton = function(item,handleClick,itemSlot) {
+  if(item.type!==""&&item.type!=="Autoinjector"){
+    return(<Button name="⌁" handleClick={handleClick} itemSlot={3}/>)
+  }else if(item.type==="Autoinjector"){
+    return(<div><Button name="Inject HP" handleClick={handleClick}/><Button name="Inject MP" handleClick={handleClick}/></div>)
+  }
+}
 
 class Loot extends Component {
   render() {
@@ -41,6 +48,7 @@ class Loot extends Component {
         <li>Loot</li>
         <li>{nameTheItem(itemOnGround)}</li>
         <li>{makeButton(itemOnGround,this.props.handleClick)}</li>
+        <li>{makeDismantleButton(itemOnGround,this.props.handleClick)}</li>
         </ul>
       </div>
     );
