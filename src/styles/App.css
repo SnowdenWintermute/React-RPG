@@ -1,34 +1,38 @@
 body{
-  background: #456;
+  background-image: url("../pics/tiles/brickTile.jpg");
+  background-repeat: repeat;
 }
 .App {
-  background: #456;
-  height: 100%;
-  width: 100%;
+
+  height: 100vh;
+  width: 100vw;
   padding:0;
   margin: 0;
   color: #CDE;
   font-size: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .grid-container{
   display: grid;
-  height: 100vh;
+  height: 80vh;
   width: 85vw;
   margin: 0vh auto;
   padding: 0;
   grid-gap: 10px;
-  grid-template-columns: 30vw 30vw 25vw;
+  grid-template-columns: 30vw 30vw 23vw;
   grid-template-rows: 40vh 40vh;
   justify-content: center;
   align-content: center;
 }
 .menuBox{
-  border: 1px solid black;
-  height: 40vh;
+  border: 3px solid #89B;
   padding: 0;
   margin: 0;
   width: 100%;
   height:100%;
+  background: #456;
 }
 #charPic{
   grid-column: 1/2;
@@ -42,8 +46,15 @@ body{
 }
 .hpBar{
   display: flex;
-  width: 200px;
+  width: 140px;
   height: 10px;
+  margin: 5px 0px 0px 10px;
+}
+.hpBarAndText{
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  margin-left: 10px;
 }
 .hpTick{
   height: 10px;
@@ -59,14 +70,27 @@ body{
 }
 .listNoStyle{
   list-style: none;
-  margin: 5px;
+  list-style-type: none;
+  margin: 0px;
+}
+.eqButtonAndIcon{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.eqSlot{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 1vw;
 }
 ul li {
   margin: 0px;
+  display: flex;
 }
 textarea{
   resize: none;
-  height: 85%;
+  height: 89%;
   width: 100%;
   background: transparent;
   border: none;
@@ -91,13 +115,19 @@ textarea{
   align-items: center;
 }
 Button{
-    width:15vw;
+    width:140px;
     background: #346;
     color: aliceblue;
     font-size: 1em;
+    border: 2px solid #89B;
+    border-radius: 0px 10px 10px 10px;
 }
 Button:hover{
   border: 2px solid white;
+}
+Button:active{
+  box-shadow: 0 2px #89B;
+  transform: translateY(2px);
 }
 #invItems Button{
   width: 3vw;
@@ -115,6 +145,10 @@ Button:hover{
   display: table-cell;
   vertical-align: middle;
 }
+.menuHeader {
+  text-align: center;
+  margin: 4px;
+}
 #stackableItems Button {
   width: 10vw;
 }
@@ -130,4 +164,45 @@ Button:hover{
 }
 h3{
   margin: 0;
+}
+p {
+  margin: 10px;
+}
+.charPicHolder{
+  margin: 10px auto;
+  width:25vw;
+  height:25vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.characterPic{
+  height:100%;
+  width: 70%;
+  max-height:100%;
+  max-width: 70%;
+  border: 3px solid #89B;
+  border-radius: 0px 10px 10px 10px
+}
+.enemyPicHolder{
+  margin: 10px auto;
+  width:20vw;
+  height:25vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.enemyPic{
+  height:100%;
+  border: 3px solid #89B;
+  border-radius: 0px 10px 10px 10px
+}
+.chestPic{
+  height:80%;
+  border: 3px solid #89B;
+}
+.buttonList{
+  width: 100%;
+  text-align: center;
 }

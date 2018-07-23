@@ -44,8 +44,8 @@ class Loot extends Component {
     const itemOnGround = this.props.itemOnGround;
     return (
       <div className="menuBox" id="loot">
+      <div className="menuHeader"><h3>Loot</h3></div>
         <ul className="listNoStyle">
-        <li>Loot</li>
         <li>{nameTheItem(itemOnGround)}</li>
         <li>{makeButton(itemOnGround,this.props.handleClick)}</li>
         <li>{makeDismantleButton(itemOnGround,this.props.handleClick)}</li>

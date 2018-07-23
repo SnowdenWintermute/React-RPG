@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
 import Button from './Button'
+import Right from '../pics/eqMenuPics/Right.png'
+import Left from '../pics/eqMenuPics/Left.png'
+import Head from '../pics/eqMenuPics/Head.png'
+import Body from '../pics/eqMenuPics/Body.png'
+import Ring from '../pics/eqMenuPics/Ring.png'
+
 
 //Name an Item. this is different from item on ground's version due to "Empty Slot"
 const nameTheItem = function(item){
@@ -44,20 +50,20 @@ class Equipment extends Component {
       <Button name="Battle Menu" key="bm" handleClick={this.props.handleClick}/>
       <br/>
 
-        <ul className="listNoStyle" id="eqlist">
-        <li>Equipment
-        </li>
-        <li>{makeButtonEq(this.props.inventory.mainHand,this.props.handleClick,0)}Right: {nameTheItem(this.props.inventory.mainHand)}
-        </li>
-        <li>{makeButtonEq(this.props.inventory.offHand,this.props.handleClick,1)}Left: {nameTheItem(this.props.inventory.offHand)}
-        </li>
-        <li>{makeButtonEq(this.props.inventory.head,this.props.handleClick,2)}Head: {nameTheItem(this.props.inventory.head)}
-        </li>
-        <li>{makeButtonEq(this.props.inventory.body,this.props.handleClick,3)}Body: {nameTheItem(this.props.inventory.body)}
-        </li>
-        <li>{makeButtonEq(this.props.inventory.ring,this.props.handleClick,4)}Ring: {nameTheItem(this.props.inventory.ring)}
-        </li>
-        </ul>
+        <div id="eqlist">
+        <div className="menuHeader"><h3>Equipment</h3>
+        </div>
+        <div className="eqSlot"><div className="eqButtonAndIcon">{makeButtonEq(this.props.inventory.mainHand,this.props.handleClick,0)}{<img src={Right} className="itemPic" />}: </div>{nameTheItem(this.props.inventory.mainHand)}
+        </div>
+        <div className="eqSlot"><div className="eqButtonAndIcon">{makeButtonEq(this.props.inventory.offHand,this.props.handleClick,1)}{<img src={Left} className="itemPic" />}: </div>{nameTheItem(this.props.inventory.offHand)}
+        </div>
+        <div className="eqSlot"><div className="eqButtonAndIcon">{makeButtonEq(this.props.inventory.head,this.props.handleClick,2)}{<img src={Head} className="itemPic" />}: </div>{nameTheItem(this.props.inventory.head)}
+        </div>
+        <div className="eqSlot"><div className="eqButtonAndIcon">{makeButtonEq(this.props.inventory.body,this.props.handleClick,3)}{<img src={Body} className="itemPic" />}: </div>{nameTheItem(this.props.inventory.body)}
+        </div>
+        <div className="eqSlot"><div className="eqButtonAndIcon">{makeButtonEq(this.props.inventory.ring,this.props.handleClick,4)}{<img src={Ring} className="itemPic" />}: </div>{nameTheItem(this.props.inventory.ring)}
+        </div>
+        </div>
       </div>
     );
   }

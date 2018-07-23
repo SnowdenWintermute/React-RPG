@@ -71,8 +71,8 @@ class Items extends Component {
     let itemOnGround = this.props.itemOnGround
     return (
       <div className="menuBox" id="items">
+      <div className="menuHeader"><h3>Items</h3></div>
         <ul className="listNoStyle" id="invItems">
-        <li>Items </li>
         {itemList(items,this.props.handleClick)}
         </ul>
         <ul className="listNoStyle" id="stackableItems">

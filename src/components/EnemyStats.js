@@ -7,7 +7,7 @@ class EnemyStats extends Component {
     return (
       <div className="menuBox" id="enemyStats">
       <Button name="Battle Menu" handleClick={this.props.handleClick}/>
-      <h3>Enemy Stats</h3>
+      <div className="menuHeader"><h3>Enemy Stats</h3></div>
       <ul className="listNoStyle">
       <li>Type: {this.props.enemyType}
       </li>
@@ -27,14 +27,31 @@ class EnemyStats extends Component {
       </div>
           );
         }
-    if(!this.props.battleState.inCombat||this.props.enemyStats.hp<1){
+    if(this.props.battleState.inCombat&&this.props.enemyStats.hp<1){
     return (
       <div className="menuBox" id="enemyStats">
-      <h3>Enemy Stats</h3>
-      <p>There is no monster in this room...</p>
+      <div className="menuHeader"><h3>Enemy Stats</h3></div>
+      <p>The monster lies defeated.</p>
       </div>
            );
          }
+      if(this.props.battleState.stairs){
+        return (
+          <div className="menuBox" id="enemyStats">
+          <div className="menuHeader"><h3>The Stairs</h3></div>
+          <p>The stairs lead deeper into the dungeon. You hear the sounds of more dangerous monsters below...</p>
+          <p>On the stairs you notice a vending machine. It will accept three shards for one autoinjector.</p>
+          </div>
+               );
+      }
+      if(this.props.battleState.treasureRoom){
+        return (
+          <div className="menuBox" id="enemyStats">
+          <div className="menuHeader"><h3>Treasure Room</h3></div>
+          <p>A locked box is on the floor. An autoinjector can break the lock.</p>
+          </div>
+               );
+      }
        }
      }
 

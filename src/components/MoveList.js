@@ -7,7 +7,7 @@ class MoveList extends Component {
     return (
       <div className="menuBox" id="moveList">
         <ul className="listNoStyle">
-        Move List
+        <div className="menuHeader"><h3>Moves</h3></div>
           <li><Button name="-" key="explore" handleClick={this.props.handleClick}/></li>
           <li><Button name="Attack" key="atk" handleClick={this.props.handleClick}/></li>
           <li><Button name="Test" key="test" handleClick={this.props.handleClick}/>
@@ -19,8 +19,8 @@ class MoveList extends Component {
   }else{
 return (
   <div className="menuBox" id="moveList">
+  <div className="menuHeader"><h3>Moves</h3></div>
     <ul className="listNoStyle">
-    Move List
       <li><Button name="Explore" key="explore" handleClick={this.props.handleClick}/></li>
       <li><Button name="Attack" key="atk" handleClick={this.props.handleClick}/></li>
       <li><Button name="Test" key="test" handleClick={this.props.handleClick}/>

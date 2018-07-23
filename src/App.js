@@ -611,6 +611,7 @@ putInInv = function(item){
   }
   combat = function(playerMove,enemyMove){
     //set up player stats
+    let playerClass = this.state.playerClass
     let playerStats = this.state.playerStats
     let equipmentStats = this.state.equipmentStats
     let playerHp = playerStats.hp
@@ -619,6 +620,7 @@ putInInv = function(item){
     let playerDef = equipmentStats.def
     let playerDex = equipmentStats.dex
     //Set up enemy stats
+    let enemyType = this.state.enemyType
     let enemyStats = this.state.enemyStats
     let enemyDex = enemyStats.dex
     let enemyHp = enemyStats.hp
@@ -629,20 +631,61 @@ putInInv = function(item){
     //compare dex and def
     let enemyNetDef = (enemyDef-Math.floor(playerDex/2)) < 0 ? 0 : (enemyDef-Math.floor(playerDex/2));
     let playerNetDef = (playerDef-Math.floor(enemyDex/2)) < 0 ? 0 : (playerDef-Math.floor(enemyDex/2));
+    let playerNetDmg = 0
+    if (playerDmg-enemyNetDef>=0){
+      playerNetDmg = playerDmg-enemyNetDef
+    }
+    let enemyNetDmg = 0
+    if (enemyDmg - playerNetDef>=0){
+      enemyNetDmg = enemyDmg - playerNetDef
+    }
 
     //perform operations based on move selection
     if(playerMove==="Attack"){
+      if(enemyType==="Mage"){
+        let spillOver = enemyMp - playerNetDmg
+        if(spillOver<=0){
+          enemyMp = 0
+          if(spillOver+enemyHp>=0){
+            enemyHp = enemyHp + spillOver
+          }else{
+            enemyHp = 0
+          }
+        }else{
+          enemyMp = enemyMp - spillOver
+        }
+        let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      }
+      else{
       if(playerDmg-enemyNetDef>=0){
         enemyHp= enemyHp - (playerDmg-enemyNetDef)
       }
-      enemyStats.hp = enemyHp;
       let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
     }
+    enemyStats.hp = enemyHp;
+    enemyStats.mp = enemyMp
     this.setState({enemyStats})
+  }
     //Enemy's move
     if(enemyHp>0){
     if(enemyMove==="Attack"){
+      if(playerClass==="Mage"){
+        let spillOver = playerMp - enemyNetDmg
+        if(spillOver<=0){
+          playerMp = 0
+          if(spillOver+playerHp>=0){
+            playerHp = playerHp + spillOver
+          }else{
+            playerHp = 0
+          }
+        }else{
+          playerMp = playerMp - spillOver
+        }
+        let tempLog = "Enemy hits Player for "+(enemyDmg-playerNetDef)+" ("+playerNetDef+" defended)"+"\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      }else{
       if(enemyDmg-playerNetDef>=0){
         playerHp = playerHp - (enemyDmg-playerNetDef)
         let tempLog = "Enemy hits Player for "+(enemyDmg-playerNetDef)+" ("+playerNetDef+" defended)"+"\n";
@@ -651,10 +694,10 @@ putInInv = function(item){
         let tempLog = "Enemy hits Player for "+0+" (perfect defense)"+"\n";
         this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
       }
-      playerStats.hp = playerHp
-      //Combat Log Message
-
     }
+    playerStats.mp = playerMp
+    playerStats.hp = playerHp
+  }
     this.setState({playerStats})
   }
   }
@@ -764,6 +807,9 @@ putInInv = function(item){
       case buttonName==="Test":
       console.log(this.state.playerStats)
       this.fullHealth();
+      let inventory = this.state.inventory;
+      inventory.autoInjectors += 10;
+      this.setState({inventory});
       break
       case buttonName==="Take":
         //function to move item
@@ -829,7 +875,7 @@ putInInv = function(item){
     return (
       <div className="App">
         <div className="grid-container">
-        <CharPic playerStats={this.state.playerStats} handleClick={this.handleClick}/>
+        <CharPic playerStats={this.state.playerStats} handleClick={this.handleClick} playerClass={this.state.playerClass}/>
         <MoveAnimation log={this.state.combatLog} handleClick={this.handleClick} />
         <EnemyPic handleClick={this.handleClick} enemyStats={this.state.enemyStats} battleState={this.state.battleState} enemyType={this.state.enemyType} playerClass={this.state.playerClass} chestOpen={this.state.chestOpen}/>
         <Items handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>

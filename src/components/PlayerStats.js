@@ -4,15 +4,11 @@ class PlayerStats extends Component {
   render() {
     return (
       <div className="menuBox" id="playerStats">
+      <div className="menuHeader"><h3>Player Stats</h3>
+      </div>
         <ul className="listNoStyle">
-        <li>Player Stats
-        </li>
-        <li>Class: {this.props.playerClass}
-        </li>
-        <li>LVL: {this.props.stats.lvl}</li>
-        <li>HP: {this.props.stats.hp} / {this.props.stats.maxHp}
-        </li>
-        <li>MP: {this.props.stats.mp} / {this.props.stats.maxMp}
+        <li>LVL {this.props.stats.lvl} {this.props.playerClass}</li>
+        <li>HP: {this.props.stats.hp} / {this.props.stats.maxHp} MP: {this.props.stats.mp} / {this.props.stats.maxMp}
         </li>
         <li>DMG: {this.props.stats.tDmg}
         </li>
@@ -25,7 +21,8 @@ class PlayerStats extends Component {
         <li>INT: {this.props.eq.int}
         </li>
         </ul>
-        Actions Taken: {this.props.actionCounter} Enemies Defeated: {this.props.enemiesDefeated}
+        <p>Actions Taken: {this.props.actionCounter}</p>
+        <p>Enemies Defeated: {this.props.enemiesDefeated}</p>
       </div>
     );
   }
