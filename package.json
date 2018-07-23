@@ -2,7 +2,7 @@
   "name": "reactrpg",
   "version": "0.1.0",
   "private": true,
-  
+
   "dependencies": {
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
@@ -14,4 +14,4 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }
-},
+}
