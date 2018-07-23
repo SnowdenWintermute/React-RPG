@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import Button from "./Button"
 
 class EnemyStats extends Component {
   render() {
     if(this.props.battleState.inCombat&&this.props.enemyStats.hp>0){
     return (
       <div className="menuBox" id="enemyStats">
+      <Button name="Battle Menu" handleClick={this.props.handleClick}/>
       <h3>Enemy Stats</h3>
       <ul className="listNoStyle">
       <li>Type: {this.props.enemyType}

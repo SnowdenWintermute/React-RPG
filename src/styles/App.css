@@ -59,6 +59,7 @@ body{
 }
 .listNoStyle{
   list-style: none;
+  margin: 5px;
 }
 ul li {
   margin: 0px;
@@ -99,7 +100,6 @@ Button:hover{
   border: 2px solid white;
 }
 #invItems Button{
-  margin-left: 1vw;
   width: 3vw;
   height: 20px;
   padding: 0px;
@@ -108,7 +108,6 @@ Button:hover{
   vertical-align: middle;
 }
 #eqlist Button{
-  margin-left: 1vw;
   width: 3vw;
   height: 20px;
   padding: 0px;

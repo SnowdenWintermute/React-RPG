@@ -25,7 +25,7 @@ class CharPic extends Component {
       <div className="menuBox" id="charPic">
       <Button name="Equipment Menu" key="eq" handleClick={this.props.handleClick}/>
       <br/>
-        HP{this.props.playerStats.hp}
+        HP: {this.props.playerStats.hp} MP: {this.props.playerStats.mp}
         <br/>
         <div className="hpBar">
         {drawHpBar(hp)}

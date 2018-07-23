@@ -27,7 +27,7 @@ class App extends Component {
       enemyStats: {hp:0, maxHp: 0, mp: 0, maxMp: 0, baseDmg:0,def:0,difficulty:0, dex:0},
       enemyType: {},
       enemyMoves: {},
-      exp: 0,
+      enemiesDefeated: 0,
       //Equipment
       equipmentStats: {dmg:0,def:0,str:0,dex:0,int:0},
       inventory: {
@@ -104,7 +104,7 @@ tradeShards = function() {
     switch(true){
       case rType === 1:
       this.setState({enemyType:"Warrior"})
-      maxHp += rDifficulty
+      maxHp += rDifficulty*dlvl
       enemyStats.dex = 0
       break
       case rType === 2:
@@ -113,7 +113,7 @@ tradeShards = function() {
       break
       case rType === 3:
       this.setState({enemyType:"Mage"})
-      maxMp += rDifficulty
+      maxMp += rDifficulty * dlvl
       enemyStats.dex = 0
       break
       default://nothing
@@ -258,16 +258,69 @@ openTreasureChest = function(){
     }
     this.setState((prevState)=>{return{inventory}})
   }
-//Calculate Damage of moves
+  //Tick the regens of warrior and mages
+  tickRegens=function(){
+    let playerClass= this.state.playerClass
+    let playerStats = this.state.playerStats
+    let tempLog = ""
+    if(playerClass==="Warrior"&&playerStats.hp<playerStats.maxHp){
+      switch(true){
+        case playerStats.lvl <= 3||(playerStats.hp+2)>playerStats.maxHp:
+        playerStats.hp ++
+        tempLog = "You regenerate 1 HP.\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        break
+        case (playerStats.lvl <= 7&&playerStats.lvl>=4)||(playerStats.hp+3)>playerStats.maxHp:
+        playerStats.hp +=2
+        tempLog = "You regenerate 2 HP.\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        break
+        case playerStats.lvl>=8:
+        playerStats.hp += 3
+        tempLog = "You regenerate 3 HP.\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        break
+      }
+      this.setState({playerStats})
+    }
+    if(playerClass==="Mage"&&playerStats.mp<playerStats.maxMp){
+      switch(true){
+        case playerStats.lvl <= 3||(playerStats.mp+2)>playerStats.maxMp:
+        playerStats.mp ++
+        tempLog = "You refresh 1 MP.\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        break
+        case (playerStats.lvl <= 7&&playerStats.lvl>=4)||(playerStats.mp+3)>playerStats.maxMp:
+        playerStats.mp +=2
+        tempLog = "You fresh 2 MP.\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        break
+        case playerStats.lvl>=8:
+        playerStats.mp += 3
+        tempLog = "You refresh 3 HP.\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        break
+      }
+      this.setState({playerStats})
+    }
+  }
+//Calculate Damage of moves, tick regens, cleanup
   resolveCombat = function(){
+    //handle death
     if(this.state.playerStats.hp<=0){
       console.log("Player died");
       let tempLog = "Player died.\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
     }
+    //tick regens
+    this.tickRegens()
+    //Handle monster Death, increment counter and print log
     if(this.state.enemyStats.hp<=0){
       console.log("Monster died.")
       let enemyStats = this.state.enemyStats
+      let enemiesDefeated = this.state.enemiesDefeated
+      enemiesDefeated ++
+      this.setState({enemiesDefeated})
       enemyStats.mp = 0
       this.setState({enemyStats})
       let tempLog = "Enemy defeated.\n";
@@ -579,7 +632,9 @@ putInInv = function(item){
 
     //perform operations based on move selection
     if(playerMove==="Attack"){
-      enemyHp = enemyHp + enemyNetDef - playerDmg;
+      if(playerDmg-enemyNetDef>=0){
+        enemyHp= enemyHp - (playerDmg-enemyNetDef)
+      }
       enemyStats.hp = enemyHp;
       let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
@@ -588,11 +643,17 @@ putInInv = function(item){
     //Enemy's move
     if(enemyHp>0){
     if(enemyMove==="Attack"){
-      playerHp = playerHp + playerNetDef - enemyDmg;
+      if(enemyDmg-playerNetDef>=0){
+        playerHp = playerHp - (enemyDmg-playerNetDef)
+        let tempLog = "Enemy hits Player for "+(enemyDmg-playerNetDef)+" ("+playerNetDef+" defended)"+"\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      }else{
+        let tempLog = "Enemy hits Player for "+0+" (perfect defense)"+"\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      }
       playerStats.hp = playerHp
       //Combat Log Message
-      let tempLog = "Enemy hits Player for "+(enemyDmg-playerNetDef)+" ("+playerNetDef+" defended)"+"\n";
-      this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+
     }
     this.setState({playerStats})
   }
@@ -618,6 +679,8 @@ putInInv = function(item){
     }
   }
   explore = function(){
+    //tick regens
+    this.tickRegens()
     //destroy item on ground
     this.setState({itemOnGround:{type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0}})
     let battleState = this.state.battleState;
@@ -670,7 +733,7 @@ putInInv = function(item){
       this.setState({actionCounter})
     }
     switch(true){
-      case buttonName==="Equipment Menu":
+      case buttonName==="Equipment Menu"||buttonName==="Enemy Stats":
         this.setState({menuPage:1})
         break
       case buttonName==="Battle Menu":
@@ -780,8 +843,8 @@ putInInv = function(item){
         <div className="App">
         <div className="grid-container">
         <Equipment  handleClick={this.handleClick} inventory={this.state.inventory}/>
-        <PlayerStats stats={this.state.playerStats} eq={this.state.equipmentStats} playerClass={this.state.playerClass} actionCounter={this.state.actionCounter}/>
-        <EnemyStats enemyStats={this.state.enemyStats} enemyType={this.state.enemyType} battleState={this.state.battleState}/>
+        <PlayerStats stats={this.state.playerStats} eq={this.state.equipmentStats} playerClass={this.state.playerClass} actionCounter={this.state.actionCounter} enemiesDefeated={this.state.enemiesDefeated}/>
+        <EnemyStats enemyStats={this.state.enemyStats} enemyType={this.state.enemyType} battleState={this.state.battleState} handleClick={this.handleClick}/>
         <Items handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>
         <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats}/>
         <Loot itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>

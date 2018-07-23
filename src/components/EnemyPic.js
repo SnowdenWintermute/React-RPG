@@ -38,7 +38,7 @@ class EnemyPic extends Component {
     if(this.props.battleState.stairs){
       return(
         <div className="menuBox" id="stairs">
-        <Button name="Explore" id="explore" handleClick={this.props.handleClick} />
+        <Button name="Explore" id="explore" handleClick={this.props.handleClick} />DLVL:{this.props.battleState.dlvl}
         <p>Stairs (3 Shards -> 1 Autoinjector)</p>
         <p>{makeStairButtons(this.props.battleState.timesExplored,this.props.handleClick)}
         <Button name="Trade shards" handleClick={this.props.handleClick}/></p>
@@ -49,7 +49,7 @@ class EnemyPic extends Component {
     if(this.props.battleState.treasureRoom){
       return(
         <div className="menuBox" id="stairs">
-        <Button name="Explore" id="explore" handleClick={this.props.handleClick} />
+        <Button name="Explore" id="explore" handleClick={this.props.handleClick} />DLVL:{this.props.battleState.dlvl}
         <p>Treasure Room</p>
         <p>{makeTreasureButton(this.props.playerClass,this.props.handleClick,this.props.chestOpen)}</p>
         <p>Rooms explored: {this.props.battleState.timesExplored}</p>
@@ -59,7 +59,7 @@ class EnemyPic extends Component {
     if(this.props.battleState.inCombat&&this.props.enemyStats.hp>0){
     return (
       <div className="menuBox" id="EnemyPic">
-      <Button name="_" id="blankButton" handleClick={this.props.handleClick} />
+      <Button name="Enemy Stats" id="blankButton" handleClick={this.props.handleClick} />DLVL:{this.props.battleState.dlvl}
         <p>Battle!</p>
         <p>Enemy: {this.props.enemyType} </p>
         <p>HP: {this.props.enemyStats.hp}/{this.props.enemyStats.maxHp}</p>
@@ -74,7 +74,7 @@ class EnemyPic extends Component {
     if(this.props.battleState.inCombat&&this.props.enemyStats.hp<=0){
     return (
       <div className="menuBox" id="EnemyPic">
-        <Button name="Explore" id="explore" handleClick={this.props.handleClick} />
+        <Button name="Explore" id="explore" handleClick={this.props.handleClick} />DLVL:{this.props.battleState.dlvl}
         <p>Enemy Defeated!</p>
         <div className="hpBar">
         {drawHpBar(hp)}

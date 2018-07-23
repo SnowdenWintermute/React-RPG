@@ -9,6 +9,7 @@ class PlayerStats extends Component {
         </li>
         <li>Class: {this.props.playerClass}
         </li>
+        <li>LVL: {this.props.stats.lvl}</li>
         <li>HP: {this.props.stats.hp} / {this.props.stats.maxHp}
         </li>
         <li>MP: {this.props.stats.mp} / {this.props.stats.maxMp}
@@ -24,7 +25,7 @@ class PlayerStats extends Component {
         <li>INT: {this.props.eq.int}
         </li>
         </ul>
-        Actions Taken: {this.props.actionCounter}
+        Actions Taken: {this.props.actionCounter} Enemies Defeated: {this.props.enemiesDefeated}
       </div>
     );
   }
