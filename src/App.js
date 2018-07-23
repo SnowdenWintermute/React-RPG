@@ -11,6 +11,7 @@ import EnemyStats from './components/EnemyStats'
 import NewGame from './components/NewGame'
 import Loot from './components/Loot'
 
+import createLoot from './functions/itemFunctions/createLoot'
 
 
 class App extends Component {
