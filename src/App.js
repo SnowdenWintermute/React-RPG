@@ -11,6 +11,10 @@ import EnemyStats from './components/EnemyStats'
 import NewGame from './components/NewGame'
 import Loot from './components/Loot'
 
+import ItemsMobile from './components/ItemsMobile'
+import EquipmentMobile from './components/EquipmentMobile'
+import MobileNavButtons from './components/MobileNavButtons'
+
 import createLoot from './functions/itemFunctions/createLoot'
 
 
@@ -882,6 +886,10 @@ putInInv = function(item){
         <Items handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>
         <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats}/>
         <Loot itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>
+
+        <EquipmentMobile handleClick={this.handleClick} inventory={this.state.inventory}/>
+        <ItemsMobile handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>
+        <MobileNavButtons handleClick={this.handleClick}/>
         </div>
       </div>)
     //Menu Page 2

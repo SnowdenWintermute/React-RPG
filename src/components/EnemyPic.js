@@ -69,7 +69,7 @@ class EnemyPic extends Component {
     const chestStatus = this.props.chestOpen;
     if(this.props.battleState.stairs){
       return(
-        <div className="menuBox" id="stairs">
+        <div className="menuBox" id="enemyPic">
         <Button name="Explore" id="explore" handleClick={this.props.handleClick} /> DLVL:{this.props.battleState.dlvl}
         <div className="menuHeader"><h3>Stairs</h3></div>
         <div className="buttonList">{makeStairButtons(this.props.battleState.timesExplored,this.props.handleClick)}
@@ -81,7 +81,7 @@ class EnemyPic extends Component {
       )};
     if(this.props.battleState.treasureRoom){
       return(
-        <div className="menuBox" id="treasureRoom">
+        <div className="menuBox" id="enemyPic">
         <Button name="Explore" id="explore" handleClick={this.props.handleClick} />DLVL:{this.props.battleState.dlvl}
         <div className="menuHeader"><h3>Treasure Room</h3></div>
         <div className="enemyPicHolder">{chestPicture(chestStatus)}
@@ -93,7 +93,7 @@ class EnemyPic extends Component {
       )};
     if(this.props.battleState.inCombat&&this.props.enemyStats.hp>0){
     return (
-      <div className="menuBox" id="EnemyPic">
+      <div className="menuBox" id="enemyPic">
       <Button name="Enemy Stats" id="blankButton" handleClick={this.props.handleClick} />DLVL:{this.props.battleState.dlvl}
         <div className="hpBarAndText">
           HP: {this.props.enemyStats.hp}
@@ -108,7 +108,7 @@ class EnemyPic extends Component {
     )};
     if(this.props.battleState.inCombat&&this.props.enemyStats.hp<=0){
     return (
-      <div className="menuBox" id="EnemyPic">
+      <div className="menuBox" id="enemyPic">
         <Button name="Explore" id="explore" handleClick={this.props.handleClick} />DLVL:{this.props.battleState.dlvl}
         <div className="menuHeader"><h3>Victory!</h3></div>
         <p>The monster falls to the ground, defeated. An item appears from the corpse...</p>
