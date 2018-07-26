@@ -90,13 +90,13 @@ class MoveList extends Component {
       <div className="menuHeader"><h3>Moves</h3></div>
         <li><Button name="Explore" key="explore" handleClick={this.props.handleClick}/></li>
         <li><Button name="Attack" key="atk" handleClick={this.props.handleClick}/></li>
-        <li><Button name="Test" key="test" handleClick={this.props.handleClick}/></li>
         <li>Unspent points: {this.props.playerSkills.freePoints}</li>
         <li><Button name="Arrow" key = "arrow" handleClick={this.props.handleClick}/>{makeSkillPlusButton("arrow",this.props.handleClick,this.props.playerSkills)}LV:{this.props.playerSkills.arrow}</li>
         <li><Button name="Dodge" key = "dodge" handleClick={this.props.handleClick}/>{makeSkillPlusButton("dodge",this.props.handleClick,this.props.playerSkills)}LV:{this.props.playerSkills.dodge}</li>
         <li><Button name="Flee" key = "flee" handleClick={this.props.handleClick}/>{makeSkillPlusButton("flee",this.props.handleClick,this.props.playerSkills)}LV:{this.props.playerSkills.flee}</li>
 
       </ul>
+      {makeTestButton(this.props.testingMode,this.props.handleClick)}
     </div>
   );
 }

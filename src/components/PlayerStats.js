@@ -10,7 +10,7 @@ class PlayerStats extends Component {
         <li>LVL {this.props.stats.lvl} {this.props.playerClass}</li>
         <li>HP: {this.props.stats.hp} / {this.props.stats.maxHp} MP: {this.props.stats.mp} / {this.props.stats.maxMp}
         </li>
-        <li>DMG: {this.props.stats.tDmg} (Pierce {(Math.floor(this.props.stats.dex/2))}
+        <li>DMG: {this.props.stats.tDmg} (ignore {(Math.floor(this.props.eq.dex/2))} armor)
         </li>
         <li>DEF: {this.props.eq.def}
         </li>

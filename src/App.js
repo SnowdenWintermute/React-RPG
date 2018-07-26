@@ -26,7 +26,7 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state={
-      testingMode:false,
+      testingMode:true,
       newGame:true,
       actionCounter:0,
       battleState:{inCombat:false,treasureRoom:false,stairs:true,timesExplored:0,timesExploredOnCurrentFloor:0,dlvl:1},
@@ -40,6 +40,7 @@ class App extends Component {
       enemyType: {},
       enemyMoves: {},
       enemyStunned: false,
+      arrowsFired:0,
       enemiesDefeated: 0,
       //Equipment
       equipmentStats: {dmg:0,def:0,str:0,dex:0,int:0},
@@ -89,6 +90,7 @@ tradeShards = function() {
     if(direction==="down"){
       battleState.dlvl ++
       battleState.timesExploredOnCurrentFloor = 0
+      this.setState({battleState})
       this.explore();
       if(battleState.dlvl>playerStats.lvl){
         playerStats.lvl++
@@ -98,17 +100,17 @@ tradeShards = function() {
       battleState.dlvl --
       this.explore();
       battleState.timesExploredOnCurrentFloor = 0
+      this.setState({battleState})
     }else{
       let tempLog = "The floor above you is sealed.\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
     }
-    this.setState({battleState})
     this.setState({playerStats})
     this.setState({playerSkills})
     this.calculateStats()
   }
 //Calculates player stats from their equipment. If heal is true, fully heals player
-  createEnemy = function(){
+  emy = function(){
     let enemyStats = this.state.enemyStats;
     let battleState = this.state.battleState;
     let dlvl = battleState.dlvl;
@@ -343,6 +345,10 @@ openTreasureChest = function(){
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
       //generate loot
       this.createLoot()
+      //reset arrow counter
+      let arrowsFired = this.state.arrowsFired
+      arrowsFired = 0
+      this.setState({arrowsFired})
     }
   }
   createLoot = function(origin){
@@ -671,7 +677,7 @@ putInInv = function(item){
             enemyHp = 0
           }
         }else{
-          enemyMp = enemyMp - spillOver
+          enemyMp = enemyMp - playerNetDmg
         }
         let tempLog = "Player hits Enemy for "+(playerNetDmg)+" ("+enemyNetDef+" defended)"+"\n";
         this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
@@ -722,7 +728,7 @@ putInInv = function(item){
           enemyHp = 0
         }
       }else{
-        enemyMp = enemyMp - spillOver
+        enemyMp = enemyMp - playerNetDmg
       }
       let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
@@ -767,7 +773,7 @@ if(playerMove==="Stun"){
         enemyHp = 0
       }
     }else{
-      enemyMp = enemyMp - spillOver
+      enemyMp = enemyMp - playerNetDmg
     }
     let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
     this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
@@ -785,30 +791,95 @@ this.setState({enemyStunned})
 console.log(this.state.enemyStunned)
 this.setState({enemyStats})
 }
+//Rogue Moves
+if(playerMove==="Arrow"){
+  let inventory = this.state.inventory
+  let arrowsFired = this.state.arrowsFired
+  inventory.shards --
+  arrowsFired ++
+  this.setState({arrowsFired})
+  this.setState({inventory})
+    if(enemyType==="Mage"){
+      let spillOver = enemyMp - playerNetDmg
+      if(spillOver<=0){
+        enemyMp = 0
+        if(spillOver+enemyHp>=0){
+          enemyHp = enemyHp + spillOver
+        }else{
+          enemyHp = 0
+        }
+      }else{
+        enemyMp = enemyMp - playerNetDmg
+      }
+      let tempLog = "Arrow hits Enemy for "+(playerNetDmg)+" ("+enemyNetDef+" defended)"+"\n";
+      this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+    }
+    else{
+    if(playerDmg-enemyNetDef>=0){
+      enemyHp= enemyHp - (playerDmg-enemyNetDef)
+    }
+    let tempLog = "Arrow hits Enemy for "+(playerNetDmg)+" ("+enemyNetDef+" defended)"+"\n";
+    this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+  }
+  enemyStats.hp = enemyHp;
+  enemyStats.mp = enemyMp
+  this.setState({enemyStats})
+}
+
+//Mage moves
+  if(playerMove==="Heat Lance"){
+    if(enemyType==="Mage"){
+      let spillOver = enemyMp - playerNetDmg + (Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3)))
+      if(spillOver<=0){
+        enemyMp = 0
+        if(spillOver+enemyHp>=0){
+          enemyHp = enemyHp + spillOver
+        }else{
+          enemyHp = 0
+        }
+      }else{
+        enemyMp = enemyMp - playerNetDmg + (Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3)))
+      }
+      let tempLog = "Player hits Enemy for "+(playerNetDmg+(Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3))))+" ("+enemyNetDef+" defended)"+"\n";
+      this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+    }
+    else{
+    if(playerDmg-enemyNetDef>=0){
+      enemyHp= enemyHp - (playerNetDmg + (Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3))))
+    }
+    let tempLog = "Player hits Enemy for "+(playerNetDmg+(Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3))))+" ("+enemyNetDef+" defended)"+"\n";
+    this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+  }
+  playerStats.mp -= this.state.playerSkills.heatLance*3
+  enemyStats.hp = enemyHp;
+  enemyStats.mp = enemyMp
+  this.setState({playerStats})
+  this.setState({enemyStats})
+  }
 
     //Enemy's move
     if(enemyHp>0){
       console.log(this.state.enemyStunned)
-      if(!enemyStunned){
+      if(!enemyStunned&&playerMove!=="Arrow"){
     if(enemyMove==="Attack"){
       if(playerClass==="Mage"){
-        let spillOver = playerMp - enemyNetDmg
-        if(spillOver<=0){
-          playerMp = 0
-          if(spillOver+playerHp>=0){
-            playerHp = playerHp + spillOver
+        let spillOver = playerMp - enemyNetDmg // check if more dmg than player mp
+        if(spillOver<=0){ //if yes,
+          playerMp = 0 //player mp 0
+          if(spillOver+playerHp>=0){ //if remaining dmg - player hp above 0
+            playerHp = playerHp + spillOver //calculate the dmg
           }else{
             playerHp = 0
           }
         }else{
-          playerMp = playerMp - spillOver
+          playerMp = playerMp - enemyNetDmg
         }
-        let tempLog = "Enemy hits Player for "+(enemyDmg-playerNetDef)+" ("+playerNetDef+" defended)"+"\n";
+        let tempLog = "Enemy hits Player for "+(enemyNetDmg)+" ("+playerNetDef+" defended)"+"\n";
         this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
       }else{
       if(enemyDmg-playerNetDef>=0){
         playerHp = playerHp - (enemyDmg-playerNetDef)
-        let tempLog = "Enemy hits Player for "+(enemyDmg-playerNetDef)+" ("+playerNetDef+" defended)"+"\n";
+        let tempLog = "Enemy hits Player for "+(enemyNetDmg)+" ("+playerNetDef+" defended)"+"\n";
         this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
       }else{
         let tempLog = "Enemy hits Player for "+0+" (perfect defense)"+"\n";
@@ -877,7 +948,7 @@ this.setState({enemyStats})
     }
     if(r===1||r===2||r===3||r===4||r===5){ //battle
       let enemyStats=this.state.enemyStats;
-      this.createEnemy()
+      this.emy()
       this.setState({enemyStats})
       battleState.inCombat=true;
       battleState.stairs=false;
@@ -1120,6 +1191,92 @@ addSkillPoint = function(slot){
         break;
         default:
       }
+      case buttonName==="Arrow":
+      if(this.state.battleState.inCombat){
+      if(this.state.inventory.shards<1){
+        let tempLog = "You need a shard to make an arrow."+"\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      }else if(this.state.arrowsFired===this.state.playerSkills.arrow){
+        let tempLog = "You can only fire "+(this.state.playerSkills.arrow)+" arrow(s) per battle."+"\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      }else{
+        this.combat("Arrow")
+        this.resolveCombat();
+      }
+      break;
+      }
+      case buttonName==="Flee":
+      if(this.state.battleState.inCombat&&this.state.playerSkills.flee>0){
+        let battleState = this.state.battleState
+        let flee = this.state.playerSkills.flee
+        let playerStats = this.state.playerStats
+        let mpCost = 0
+        switch(true){
+          case flee===1:
+          mpCost = 4
+          break;
+          case flee===2:
+          mpCost = 3
+          break;
+          case flee===3:
+          mpCost = 2
+          break;
+          default:
+        }
+        if(playerStats.mp>=mpCost){
+        battleState.inCombat=false
+        playerStats.mp -= mpCost
+        this.setState({playerStats})
+        this.setState({battleState})
+        let tempLog = "You escape to the next room."+"\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        this.explore()
+      }else{
+        let tempLog = "Not enough MP to use level "+(this.state.playerSkills.flee)+" flee ("+mpCost+" required)."+"\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      }
+      }
+      break;
+      case buttonName==="Heat Lance":
+      let playerSkills=this.state.playerSkills
+      if(this.state.playerSkills.heatLance>0&&this.state.battleState.inCombat&&this.state.playerStats.mp>=(playerSkills.heatLance*3)){
+        this.combat("Heat Lance");
+        this.resolveCombat();
+      }else if(this.state.playerSkills.heatLance>0&&this.state.battleState.inCombat){
+        let tempLog = "Not enough MP to use level "+(this.state.playerSkills.heatLance)+" Heat Lance ("+(playerSkills.heatLance*3)+" required)."+"\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      }
+      break;
+      case buttonName==="Eat Shard":
+        if(this.state.inventory.shards>0&&this.state.playerSkills.eatShard!==0){
+          let inventory = this.state.inventory
+          let playerStats = this.state.playerStats
+          let mpRecovered = 0
+          let hpRecovered = 0
+          inventory.shards--
+          this.setState({inventory})
+          if((playerStats.hp+(this.state.playerSkills.eatShard*2))>playerStats.maxHp){
+            hpRecovered = playerStats.maxHp - playerStats.hp
+            playerStats.hp = playerStats.maxHp
+          }else{
+            hpRecovered = (this.state.playerSkills.eatShard*2)
+            playerStats.hp=playerStats.hp+(this.state.playerSkills.eatShard*2)
+          }
+          if((playerStats.mp+(this.state.playerSkills.eatShard*2))>playerStats.maxMp){
+            mpRecovered = playerStats.maxMp - playerStats.mp
+            playerStats.mp = playerStats.maxMp
+          }else{
+            mpRecovered = (this.state.playerSkills.eatShard*2)
+            playerStats.mp=playerStats.mp+(this.state.playerSkills.eatShard*2)
+          }
+          let tempLog = "You recover "+hpRecovered+" HP and "+mpRecovered+" MP."+"\n";
+          this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+          this.setState({playerStats})
+        }else if(this.state.playerSkills.eatShard!==0){
+          let tempLog = "You have no shards."+"\n";
+          this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        }
+        break;
       default:
       //do nothing
     }
@@ -1149,9 +1306,6 @@ addSkillPoint = function(slot){
         <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats} playerSkills={this.state.playerSkills} playerClass={this.state.playerClass} armorSpikes={this.state.armorSpikes} testingMode={this.state.testingMode}/>
         <Loot itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>
 
-        <EquipmentMobile handleClick={this.handleClick} inventory={this.state.inventory}/>
-        <ItemsMobile handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>
-        <MobileNavButtons handleClick={this.handleClick}/>
         </div>
       </div>)
     //Menu Page 2
@@ -1166,11 +1320,6 @@ addSkillPoint = function(slot){
         <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats} playerSkills={this.state.playerSkills} playerClass={this.state.playerClass} armorSpikes={this.state.armorSpikes}  testingMode={this.state.testingMode}/>
         <Loot itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>
 
-        <CharPicMobile playerStats={this.state.playerStats} handleClick={this.handleClick} playerClass={this.state.playerClass}/>
-        <EnemyPicMobile handleClick={this.handleClick} enemyStats={this.state.enemyStats} battleState={this.state.battleState} enemyType={this.state.enemyType} playerClass={this.state.playerClass} chestOpen={this.state.chestOpen}/>
-        <MoveListMobile handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats}/>
-        <LootMobile itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>
-        <MobileNavButtons handleClick={this.handleClick}/>
         </div>
         </div>
     )
