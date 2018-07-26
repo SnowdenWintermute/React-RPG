@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import InventoryItem from './InventoryItem'
 import Button from './Button'
+import EmptySlot from '../pics/eqMenuPics/EmptySlot.png'
+import Right from '../pics/eqMenuPics/Right.png'
+import Left from '../pics/eqMenuPics/Left.png'
+import Head from '../pics/eqMenuPics/Head.png'
+import Body from '../pics/eqMenuPics/Body.png'
+import Ring from '../pics/eqMenuPics/Ring.png'
 
 //Name an Item. this is different from item on ground's version due to "Empty Slot"
 const nameTheItem = function(item){
@@ -39,9 +45,12 @@ const makeButton = function(item,handleClick,itemSlot) {
   }
 }
 const makeButtonEq = function(item,handleClick,itemSlot){
+  if(item.type===""){
+    return(<Button name="-" handleClick={handleClick}/>)
+  }
   if(item.type!==""){
     if(item.type==="1H Weapon"||item.type==="Shield"){
-    return(<div><Button name="▷" handleClick={handleClick} itemSlot={itemSlot}/>
+    return(<div className="lrEqButton"><Button name="▷" handleClick={handleClick} itemSlot={itemSlot}/>
     <Button name="◁" handleClick={handleClick} itemSlot={itemSlot}/></div>)
     }else{
     return(<Button name="△" handleClick={handleClick} itemSlot={itemSlot}/>)
@@ -50,15 +59,41 @@ const makeButtonEq = function(item,handleClick,itemSlot){
 }
 
 //the items
+//item pic
+const itemPic=function(item){
+  let pic = {}
+  switch(true){
+    case item.type==="1H Weapon":
+    pic = <img src={Right} className="itemPic" />
+    break
+    case item.type==="Shield":
+    pic = <img src={Left} className="itemPic" />
+    break
+    case item.type==="Helm":
+    pic = <img src={Head} className="itemPic" />
+    break
+    case item.type==="Armor":
+    pic = <img src={Body} className="itemPic" />
+    break
+    case item.type==="Ring":
+    pic = <img src={Ring} className="itemPic" />
+    break
+    case item.type==="":
+    pic = <img src={EmptySlot} className="itemPic" />
+    break
+    default:
+  }
+  return pic;
+}
 //List the items to be rendered
 const itemList=function(items,handleClick){
   let namedItemsList=[];
   let key = 0;
   items.forEach(function(item){
     namedItemsList.push(
-    <li className="invItem" key={key.toString()}>
-    {nameTheItem(item)}{makeButton(item,handleClick,key)}{makeButtonEq(item,handleClick,key)}
-    </li>);
+    <div className="invItem" key={key.toString()}>
+    {itemPic(item)}{nameTheItem(item)}{makeButton(item,handleClick,key)}{makeButtonEq(item,handleClick,key)}
+    </div>);
       key= key+1
   })
     return namedItemsList;
@@ -72,14 +107,17 @@ class ItemsMobile extends Component {
     return (
       <div className="menuBox" id="itemsMobile">
       <div className="menuHeader"><h3>Items</h3></div>
-        <ul className="listNoStyle" id="invItems">
+        <div className="flexContainer">
+        <div className="flexContainerSub">
         {itemList(items,this.props.handleClick)}
-        </ul>
-        <ul className="listNoStyle" id="stackableItems">
-        <li>AutoInjectors: {this.props.inventory.autoInjectors}</li>
-        <li><Button name="Inject HP" handleClick={this.props.handleClick}/><Button name="Inject MP" handleClick={this.props.handleClick}/></li>
-        <li>Shards: {this.props.inventory.shards}</li>
-        </ul>
+        </div>
+        <div className = "flexContainerSub">
+        <div className="stackableItemDiv">AutoInjectors: {this.props.inventory.autoInjectors}</div>
+        <div className="stackableItemDiv">Shards: {this.props.inventory.shards}</div>
+        <div className="stackableItemDiv"><Button name="Inject HP" handleClick={this.props.handleClick}/></div>
+        <div className="stackableItemDiv"><Button name="Inject MP" handleClick={this.props.handleClick}/></div>
+        </div>
+        </div>
       </div>
     );
   }

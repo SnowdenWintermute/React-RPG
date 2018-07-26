@@ -16,9 +16,9 @@ body{
 }
 .grid-container{
   display: grid;
-  height: 80vh;
-  width: 85vw;
-  margin: 0vh auto;
+  max-height: 84vh;
+  max-width: 84vw;
+  margin: 0 0;
   padding: 0;
   grid-gap: 10px;
   grid-template-columns: 7vw 7vw 7vw 7vw 7vw 7vw 7vw 7vw 7vw 7vw 7vw 7vw ;
@@ -97,12 +97,12 @@ body{
   height:100%;
   width:100%;
 }
-#equipmentMobile{
-  display:none;
-}
-#itemsMobile{
-  display:none;
-}
+#equipmentMobile,
+#itemsMobile,
+#charPicMobile,
+#enemyPicMobile,
+#lootMobile,
+#moveListMobile,
 #mobileNavButtons{
   display: none;
 }
@@ -152,7 +152,7 @@ body{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 1vw;
+  margin: 0 1%;
 }
 ul li {
   margin: 0px;
@@ -186,6 +186,7 @@ textarea{
 }
 Button{
     background: #346;
+    min-width: 80px;
     color: aliceblue;
     font-size: 1em;
     border: 2px solid #89B;
@@ -196,7 +197,6 @@ Button:hover{
 }
 Button:active{
   box-shadow: 0 2px #89B;
-  transform: translateY(2px);
 }
 #invItems Button{
   width: 2vw;
@@ -205,6 +205,16 @@ Button:active{
   text-align: center;
   display: table-cell;
   vertical-align: middle;
+}
+.invItem{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 8%;
+}
+.invItem Img{
+  height:8vh;
+  margin: 0;
 }
 #eqlist Button{
   width: 100%;
@@ -218,11 +228,16 @@ Button:active{
   text-align: center;
   margin: 4px;
 }
-#stackableItems Button {
-  width: 10vw;
+.stackableItemDiv{
+  margin: 0px 0% 6% 0px ;
 }
+.stackableItemDiv Button{
+  width:100%;
+  height: 100%;
+}
+
 #classDescriptions{
-  grid-column: 5/12;
+  grid-column: 5/13;
   grid-row-start: 1;
   grid-row-end: 8;
 }
@@ -287,7 +302,7 @@ p {
     flex-direction: column;
     grid-column: 12/13;
     grid-row-start: 1;
-    grid-row-end: 8;
+    grid-row-end: 7;
   }
   #mobileNavButtons Button{
     width: 100%;
@@ -309,9 +324,44 @@ p {
     height:100%;
     width:100%;
   }
+  #charPicMobile{
+    display: block;
+    grid-column: 1/7;
+    grid-row:1/4;
+  }
+  #moveListMobile{
+    display: block;
+    grid-column: 1/7;
+    grid-row-start: 4;
+    grid-row-end: 7;
+    height:100%;
+    width:100%;
+  }
+  #enemyPicMobile{
+    display: block;
+    grid-column: 7/12;
+    grid-row:1/4;
+  }
+  #lootMobile{
+    display: block;
+    grid-column: 7/12;
+    grid-row-start: 4;
+    grid-row-end: 7;
+    max-height:100%;
+    max-width:100%;
+  }
+  #itemsMobile{
+    display: block;
+    grid-column: 1/12;
+    grid-row-start: 4;
+    grid-row-end: 8;
+    max-height:100%;
+    max-width:100%;
+  }
   .eqItemName{
     display: flex;
     justify-content: flex-end;
+    align-items: center;
   }
   #eqMobileGrid{
     display:grid;
@@ -322,8 +372,20 @@ p {
     grid-template-rows: 7vh 7vh 7vh 7vh 7vh;
     justify-content: center;
     align-content: center;
-    height: 40vh;
-    width: 80vw;
+    max-height: 40vh;
+    max-width: 80vw;
+  }
+  .flexContainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5%;
+  }
+  .flexContainerSub{
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
   }
   #eqMainHandButton{
     grid-column: 1/2;
@@ -393,12 +455,13 @@ p {
     grid-column: 3/6;
     grid-row: 5/6;
   }
-  #itemsMobile{
-    display: block;
-    grid-column: 1/12;
-    grid-row-start: 4;
-    grid-row-end: 8;
-    height:100%;
-    width:100%;
+  #itemsMobile .invItem Button{
+    width: 6vh;
+    height: 6vh;
+    margin: 0;
+    padding: 0px;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
   }
 }

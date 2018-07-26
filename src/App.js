@@ -14,6 +14,10 @@ import Loot from './components/Loot'
 import ItemsMobile from './components/ItemsMobile'
 import EquipmentMobile from './components/EquipmentMobile'
 import MobileNavButtons from './components/MobileNavButtons'
+import CharPicMobile from './components/CharPicMobile';
+import EnemyPicMobile from './components/EnemyPicMobile'
+import MoveListMobile from './components/MoveListMobile'
+import LootMobile from './components/LootMobile'
 
 import createLoot from './functions/itemFunctions/createLoot'
 
@@ -22,6 +26,7 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state={
+      testingMode:false,
       newGame:true,
       actionCounter:0,
       battleState:{inCombat:false,treasureRoom:false,stairs:true,timesExplored:0,timesExploredOnCurrentFloor:0,dlvl:1},
@@ -29,9 +34,12 @@ class App extends Component {
       lootMenu:0,
       playerClass:"",
       playerStats: {lvl: 1, hp: 0, maxHp: 0, mp: 0, maxMp: 0, baseDmg: 0,tDmg: 0},
+      armorSpikes:0,
+      playerSkills: {freePoints:1,armorBreak:0,stun:0,spikedArmor:0,arrow:0,dodge:0,flee:0,heatLance:0,eatShard:0,manaBurn:0},
       enemyStats: {hp:0, maxHp: 0, mp: 0, maxMp: 0, baseDmg:0,def:0,difficulty:0, dex:0},
       enemyType: {},
       enemyMoves: {},
+      enemyStunned: false,
       enemiesDefeated: 0,
       //Equipment
       equipmentStats: {dmg:0,def:0,str:0,dex:0,int:0},
@@ -77,12 +85,14 @@ tradeShards = function() {
   useStairs=function(direction){
     let battleState = this.state.battleState
     let playerStats = this.state.playerStats
+    let playerSkills = this.state.playerSkills
     if(direction==="down"){
       battleState.dlvl ++
-      this.explore();
       battleState.timesExploredOnCurrentFloor = 0
+      this.explore();
       if(battleState.dlvl>playerStats.lvl){
         playerStats.lvl++
+        playerSkills.freePoints++
       }
     }else if(direction=="up"&&battleState.dlvl!==1){
       battleState.dlvl --
@@ -94,6 +104,7 @@ tradeShards = function() {
     }
     this.setState({battleState})
     this.setState({playerStats})
+    this.setState({playerSkills})
     this.calculateStats()
   }
 //Calculates player stats from their equipment. If heal is true, fully heals player
@@ -125,7 +136,7 @@ tradeShards = function() {
     }
     //set up the stats to go out
     enemyStats.def = dlvl + 1;
-    enemyStats.baseDmg = dlvl + 1 + rDifficulty;
+    enemyStats.baseDmg = (dlvl) * Math.floor(rDifficulty);
     enemyStats.maxMp = maxMp
     enemyStats.mp = maxMp
     enemyStats.maxHp = maxHp
@@ -614,7 +625,7 @@ putInInv = function(item){
     this.setState({inventory})
     this.setState({itemOnGround})
   }
-  combat = function(playerMove,enemyMove){
+  combat = function(playerMove){
     //set up player stats
     let playerClass = this.state.playerClass
     let playerStats = this.state.playerStats
@@ -632,6 +643,8 @@ putInInv = function(item){
     let enemyMp = enemyStats.mp
     let enemyDmg = enemyStats.baseDmg
     let enemyDef = enemyStats.def
+    let dlvl = this.state.battleState.dlvl
+    let enemyStunned = false
 
     //compare dex and def
     let enemyNetDef = (enemyDef-Math.floor(playerDex/2)) < 0 ? 0 : (enemyDef-Math.floor(playerDex/2));
@@ -644,7 +657,8 @@ putInInv = function(item){
     if (enemyDmg - playerNetDef>=0){
       enemyNetDmg = enemyDmg - playerNetDef
     }
-
+    //decide enemy move:
+    let enemyMove = "Attack"
     //perform operations based on move selection
     if(playerMove==="Attack"){
       if(enemyType==="Mage"){
@@ -659,22 +673,123 @@ putInInv = function(item){
         }else{
           enemyMp = enemyMp - spillOver
         }
-        let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
+        let tempLog = "Player hits Enemy for "+(playerNetDmg)+" ("+enemyNetDef+" defended)"+"\n";
         this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
       }
       else{
       if(playerDmg-enemyNetDef>=0){
         enemyHp= enemyHp - (playerDmg-enemyNetDef)
       }
-      let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
+      let tempLog = "Player hits Enemy for "+(playerNetDmg)+" ("+enemyNetDef+" defended)"+"\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
     }
     enemyStats.hp = enemyHp;
     enemyStats.mp = enemyMp
     this.setState({enemyStats})
   }
+
+  //Warrior Moves
+  if(playerMove==="Armor Break"){
+    //check skill level and take mp appropriately
+    let skillLevel = this.state.playerSkills.armorBreak
+    playerStats.mp -= (3)
+    playerMp -= (3)
+    this.setState((prevState)=>{return{playerStats}})
+    //reduce enemy defense
+    if(enemyStats.def-Math.floor(equipmentStats.str*(skillLevel/3))>0){
+    enemyStats.def -= Math.floor(equipmentStats.str*(skillLevel/3))
+    enemyDef -= Math.floor(equipmentStats.str*(skillLevel/3))
+  }else{
+    enemyStats.def=0
+    enemyDef=0
+  }
+    let tempLog = "Player destroys "+Math.floor(equipmentStats.str*(skillLevel/3))+" of Enemy's armor. "+"("+enemyDef+" remaining)"+"\n";
+    this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+    //check player dmg against new enemy defense, if below 0 its 0
+    enemyNetDef = (enemyDef-Math.floor(playerDex/2)) < 0 ? 0 : (enemyDef-Math.floor(playerDex/2));
+    playerNetDmg = 0
+    if (playerDmg-enemyNetDef>=0){
+      playerNetDmg = playerDmg-enemyNetDef
+    }
+    //take from mana first if enemy is mage
+    if(enemyType==="Mage"){
+      let spillOver = enemyMp - playerNetDmg
+      if(spillOver<=0){
+        enemyMp = 0
+        if(spillOver+enemyHp>=0){
+          enemyHp = enemyHp + spillOver
+        }else{
+          enemyHp = 0
+        }
+      }else{
+        enemyMp = enemyMp - spillOver
+      }
+      let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
+      this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+    }
+    else{
+    if(playerDmg-enemyNetDef>=0){
+      enemyHp= enemyHp - (playerDmg-enemyNetDef)
+    }
+    let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
+    this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+  }
+  enemyStats.hp = enemyHp
+  enemyStats.mp = enemyMp
+  if (enemyStats.hp<1){
+    enemyStats.mp =0;
+  }
+  this.setState({enemyStats})
+  }
+//Stun
+if(playerMove==="Stun"){
+  playerStats.mp -= (3)
+  playerMp -= (3)
+  this.setState((prevState)=>{return{playerStats}})
+  let skillLevel=this.state.playerSkills.stun
+  let rStun = this.getRandomInt(1,7) * skillLevel
+  if(rStun>=dlvl){
+    enemyStunned=true
+    console.log(enemyStunned)
+    let tempLog = "Stun successful!"+"\n";
+    this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+  }else{
+    let tempLog = "Stun failed."+"\n";
+    this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+  }
+  if(enemyType==="Mage"){
+    let spillOver = enemyMp - playerNetDmg
+    if(spillOver<=0){
+      enemyMp = 0
+      if(spillOver+enemyHp>=0){
+        enemyHp = enemyHp + spillOver
+      }else{
+        enemyHp = 0
+      }
+    }else{
+      enemyMp = enemyMp - spillOver
+    }
+    let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
+    this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+  }
+  else{
+  if(playerDmg-enemyNetDef>=0){
+    enemyHp= enemyHp - (playerDmg-enemyNetDef)
+  }
+  let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
+  this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+}
+enemyStats.hp = enemyHp;
+enemyStats.mp = enemyMp
+this.setState({enemyStunned})
+console.log(this.state.enemyStunned)
+this.setState({enemyStats})
+}
+
     //Enemy's move
     if(enemyHp>0){
+      console.log(this.state.enemyStunned)
+      if(!enemyStunned){
     if(enemyMove==="Attack"){
       if(playerClass==="Mage"){
         let spillOver = playerMp - enemyNetDmg
@@ -704,6 +819,20 @@ putInInv = function(item){
     playerStats.hp = playerHp
   }
     this.setState({playerStats})
+    //handle armor spikes
+    if(this.state.playerSkills.spikedArmor>0){ //even have the skill
+      if((this.state.armorSpikes-enemyNetDef)>0){ //spikes can penetrate enemy armor
+          enemyHp-=(this.state.armorSpikes-enemyNetDef)
+          enemyStats.hp = enemyHp
+          this.setState({enemyHp})
+          let tempLog = "Enemy takes "+(this.state.armorSpikes-enemyNetDef)+" damage from spikes. ("+(enemyNetDef)+" defended)"+"\n";
+          this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        }else{
+          let tempLog = "Enemy takes "+0+" damage from spikes (perfect defense)."+"\n";
+          this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+    }
+    }
+  }
   }
   }
 
@@ -727,6 +856,7 @@ putInInv = function(item){
     }
   }
   explore = function(){
+    if(!this.state.battleState.inCombat||this.state.enemyStats.hp<1){
     //tick regens
     this.tickRegens()
     //destroy item on ground
@@ -766,12 +896,76 @@ putInInv = function(item){
       battleState.treasureRoom=false;
     }
     this.setState({battleState})
+  }else{
+    let tempLog = "You must defeat the enemy before exploring."+"\n";
+    this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+  }
   }
   //make random int
   getRandomInt = function(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
+
+//add skillpoint
+addSkillPoint = function(slot){
+  let playerSkills=this.state.playerSkills
+  switch(true){
+    case this.state.playerClass === "Warrior":
+      switch(true){
+        case slot==="0":
+        playerSkills.armorBreak+=1
+        playerSkills.freePoints-=1
+        break;
+        case slot==="1":
+        playerSkills.stun+=1
+        playerSkills.freePoints-=1
+        break;
+        case slot==="2":
+        playerSkills.spikedArmor+=1
+        playerSkills.freePoints-=1
+        break;
+        default:
+      }
+    break;
+    case this.state.playerClass === "Rogue":
+      switch(true){
+        case slot==="0":
+        playerSkills.arrow+=1
+        playerSkills.freePoints-=1
+        break;
+        case slot==="1":
+        playerSkills.dodge+=1
+        playerSkills.freePoints-=1
+        break;
+        case slot==="2":
+        playerSkills.flee+=1
+        playerSkills.freePoints-=1
+        break;
+        default:
+      }
+    break;
+    case this.state.playerClass === "Mage":
+      switch(true){
+        case slot==="0":
+        playerSkills.heatLance+=1
+        playerSkills.freePoints-=1
+        break;
+        case slot==="1":
+        playerSkills.eatShard+=1
+        playerSkills.freePoints-=1
+        break;
+        case slot==="2":
+        playerSkills.manaBurn+=1
+        playerSkills.freePoints-=1
+        break;
+        default:
+      }
+    break;
+    default:
+  }
+  this.setState((prevState)=>{return{playerSkills}})
 }
   //Handle the Buttons
   handleClick = function(buttonName,itemSlot){
@@ -810,10 +1004,13 @@ putInInv = function(item){
         break
       //Button for testing things
       case buttonName==="Test":
+      let playerStats=this.state.playerStats
+      this.setState({playerStats})
       console.log(this.state.playerStats)
       this.fullHealth();
       let inventory = this.state.inventory;
       inventory.autoInjectors += 10;
+      inventory.shards +=10;
       this.setState({inventory});
       break
       case buttonName==="Take":
@@ -858,6 +1055,71 @@ putInInv = function(item){
       case buttonName==="Inject lock":
       this.openTreasureChest()
       break
+      case buttonName==="˄":
+      let menuPage = this.state.menuPage
+      if(menuPage===2){
+        menuPage =0;
+      }else{
+        menuPage++
+      }
+      this.setState({menuPage})
+      break;
+      case buttonName==="˅":
+      menuPage = this.state.menuPage
+      if(menuPage===0){
+        menuPage=2;
+      }else{
+        menuPage--
+      }
+      this.setState({menuPage})
+      break;
+      case buttonName==="+":
+      this.addSkillPoint(itemSlot)
+      break;
+      case buttonName==="Armor Break":
+      if(this.state.battleState.inCombat&&this.state.enemyStats.hp>0){
+      if(this.state.playerStats.mp >= 3&&this.state.playerSkills.armorBreak!==0){
+      this.combat("Armor Break")
+      this.resolveCombat();
+    }else if(this.state.playerSkills.armorBreak!==0){
+      let tempLog = "Not enough MP to use level "+this.state.playerSkills.armorBreak+" Armor Break (need "+(3)+")"+"\n";
+      this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+    }
+  }
+      break;
+      case buttonName==="Stun":
+      if(this.state.battleState.inCombat&&this.state.enemyStats.hp>0){
+      if(this.state.playerStats.mp >= 3&&this.state.playerSkills.stun!==0){
+      this.combat("Stun")
+      this.resolveCombat();
+    }else if(this.state.playerSkills.stun!==0){
+      let tempLog = "Not enough MP to use level "+this.state.playerSkills.stun+" Stun (need "+(3)+")"+"\n";
+      this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+    }
+  }
+      break;
+      case buttonName==="Spiked Armor":
+      switch(true){
+        case this.state.playerSkills.spikedArmor*5<=this.state.armorSpikes:
+        let tempLog = "You can not add more spikes to level "+this.state.playerSkills.spikedArmor+" Armor Spikes (max of "+5+" per lvl)"+"\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        break;
+        case this.state.playerSkills.spikedArmor>0&&this.state.armorSpikes<(this.state.playerSkills.spikedArmor*5):
+        if(this.state.inventory.shards>0){
+        tempLog = "You add a shard to your Armor Spikes ("+(this.state.playerSkills.spikedArmor*5-this.state.armorSpikes-1)+" spots remaining)"+"\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        let inventory = this.state.inventory
+        inventory.shards --
+        this.setState({inventory})
+        let armorSpikes = this.state.armorSpikes + 1
+        this.setState({armorSpikes})
+      }else{
+        tempLog = "You have no shards to add to your armor."+"\n";
+        this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      }
+        break;
+        default:
+      }
       default:
       //do nothing
     }
@@ -884,7 +1146,7 @@ putInInv = function(item){
         <MoveAnimation log={this.state.combatLog} handleClick={this.handleClick} />
         <EnemyPic handleClick={this.handleClick} enemyStats={this.state.enemyStats} battleState={this.state.battleState} enemyType={this.state.enemyType} playerClass={this.state.playerClass} chestOpen={this.state.chestOpen}/>
         <Items handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>
-        <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats}/>
+        <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats} playerSkills={this.state.playerSkills} playerClass={this.state.playerClass} armorSpikes={this.state.armorSpikes} testingMode={this.state.testingMode}/>
         <Loot itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>
 
         <EquipmentMobile handleClick={this.handleClick} inventory={this.state.inventory}/>
@@ -901,8 +1163,14 @@ putInInv = function(item){
         <PlayerStats stats={this.state.playerStats} eq={this.state.equipmentStats} playerClass={this.state.playerClass} actionCounter={this.state.actionCounter} enemiesDefeated={this.state.enemiesDefeated}/>
         <EnemyStats enemyStats={this.state.enemyStats} enemyType={this.state.enemyType} battleState={this.state.battleState} handleClick={this.handleClick}/>
         <Items handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>
-        <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats}/>
+        <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats} playerSkills={this.state.playerSkills} playerClass={this.state.playerClass} armorSpikes={this.state.armorSpikes}  testingMode={this.state.testingMode}/>
         <Loot itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>
+
+        <CharPicMobile playerStats={this.state.playerStats} handleClick={this.handleClick} playerClass={this.state.playerClass}/>
+        <EnemyPicMobile handleClick={this.handleClick} enemyStats={this.state.enemyStats} battleState={this.state.battleState} enemyType={this.state.enemyType} playerClass={this.state.playerClass} chestOpen={this.state.chestOpen}/>
+        <MoveListMobile handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats}/>
+        <LootMobile itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>
+        <MobileNavButtons handleClick={this.handleClick}/>
         </div>
         </div>
     )
