@@ -47,7 +47,8 @@ const drawMpBar=function(mp){
 }
 const makeStairButtons=function(roomsExplored,handleClick){
   if(roomsExplored>=3){
-    return(<div><Button name="Go up" id="goUp" handleClick={handleClick}/><br/><Button name="Go down" id="goDown" handleClick={handleClick}/></div>)
+    return(<div className="stairButtons"><Button name="Go up" id="goUp" handleClick={handleClick}/>
+    <Button name="Go down" id="goDown" handleClick={handleClick}/></div>)
   }
 }
 const makeTreasureButton=function(playerClass,handleClick,chestOpen){
@@ -58,9 +59,48 @@ const makeTreasureButton=function(playerClass,handleClick,chestOpen){
     return(<Button name="Inject lock" id="pickLock" handleClick={handleClick}/>)
   }
 }else{
-  return(<div>The chest opens...</div>)
+  return(<div id="theChestOpens">The chest opens...</div>)
 }
 }
+
+//Name the Item
+const nameTheItem = function(item){
+  let name = ""
+  name += (item.type)
+  if(item.type!=="Autoinjector"&&item.type!==""){
+    name+=" of "
+  }
+  if(item.dmg!==0){
+    name+=(item.dmg+" DMG ")
+  }
+  if(item.def!==0){
+    name+=(item.def+" DEF ")
+  }
+  if(item.str!==0){
+    name+=(item.str+" STR")
+  }
+  if(item.dex!==0){
+    name+=(item.dex+" DEX")
+  }
+  if(item.int!==0){
+    name+=(item.int+" INT")
+  }
+  return name;
+}
+
+const makeButton = function(item,handleClick) {
+  if(item.type!==""){
+    return(<Button name="Take" handleClick={handleClick}/>)
+  }
+}
+const makeDismantleButton = function(item,handleClick,itemSlot) {
+  if(item.type!==""&&item.type!=="Autoinjector"){
+    return(<Button name="⌁" handleClick={handleClick} itemSlot={3}/>)
+  }else if(item.type==="Autoinjector"){
+    return(<div><Button name="Inject HP" handleClick={handleClick}/><Button name="Inject MP" handleClick={handleClick}/></div>)
+  }
+}
+
 class EnemyPic extends Component {
   render() {
     const hp = this.props.enemyStats.hp;
@@ -70,56 +110,60 @@ class EnemyPic extends Component {
     if(this.props.battleState.stairs){
       return(
         <div className="menuBox" id="enemyPic">
-        <Button name="Explore" id="explore" handleClick={this.props.handleClick} /> DLVL:{this.props.battleState.dlvl}
-        <div className="menuHeader"><h3>Stairs</h3></div>
-        <div className="buttonList">{makeStairButtons(this.props.battleState.timesExplored,this.props.handleClick)}
+        <div className="enemyPicGrid">
+        <div id="stairsHeader">Stairs on DLVL:{this.props.battleState.dlvl}</div>
+        {makeStairButtons(this.props.battleState.timesExplored,this.props.handleClick)}
+        <div id="shardButtonHolder">
         <Button name="Trade shards" handleClick={this.props.handleClick}/>
         </div>
-        <p>Rooms explored: {this.props.battleState.timesExplored}</p>
-        <p>On this floor: {this.props.battleState.timesExploredOnCurrentFloor}</p>
+        <div id="roomsExplored">Rooms explored: {this.props.battleState.timesExplored}</div>
+        <div id="onThisFloor">On this floor: {this.props.battleState.timesExploredOnCurrentFloor}</div>
+        </div>
         </div>
       )};
     if(this.props.battleState.treasureRoom){
       return(
         <div className="menuBox" id="enemyPic">
-        <Button name="Explore" id="explore" handleClick={this.props.handleClick} />DLVL:{this.props.battleState.dlvl}
-        <div className="menuHeader"><h3>Treasure Room</h3></div>
-        <div className="enemyPicHolder">{chestPicture(chestStatus)}
+        <div className="enemyPicGrid">
+        <div className="treasurePicHolder">{chestPicture(chestStatus)}
+        </div>
+        <div className="treasureButtonHolder">
         {makeTreasureButton(this.props.playerClass,this.props.handleClick,this.props.chestOpen)}
         </div>
-        <p>Rooms explored: {this.props.battleState.timesExplored}</p>
-        <p>On this floor: {this.props.battleState.timesExploredOnCurrentFloor}</p>
+        </div>
         </div>
       )};
     if(this.props.battleState.inCombat&&this.props.enemyStats.hp>0){
     return (
       <div className="menuBox" id="enemyPic">
-      <Button name="Enemy Stats" id="blankButton" handleClick={this.props.handleClick} />DLVL:{this.props.battleState.dlvl}
-        <div className="hpBarAndText">
-          HP: {this.props.enemyStats.hp}
-          <div className="hpBar">{drawHpBar(hp)}</div>
-        </div>
-        <div className="hpBarAndText">
-         MP: {this.props.enemyStats.mp}
-        <div className="hpBar">{drawMpBar(mp)}</div>
-        </div>
-        <div className="enemyPicHolder">{enemyPicture(enemyType)}</div>
+      <div className="enemyPicGrid">
+      <div className="hpText">
+      HP: {this.props.enemyStats.hp}
+      </div>
+      <div className="hpBar">{drawHpBar(hp)}
+      </div>
+      <div className="mpText">
+      MP: {this.props.enemyStats.mp}
+      </div>
+      <div className="mpBar">{drawMpBar(mp)}
+      </div>
+      <div className="enemyPicHolder">{enemyPicture(enemyType)}
+      </div>
+      </div>
       </div>
     )};
     if(this.props.battleState.inCombat&&this.props.enemyStats.hp<=0){
+    const itemOnGround = this.props.itemOnGround;
     return (
-      <div className="menuBox" id="enemyPic">
-        <Button name="Explore" id="explore" handleClick={this.props.handleClick} />DLVL:{this.props.battleState.dlvl}
-        <div className="menuHeader"><h3>Victory!</h3></div>
-        <p>The monster falls to the ground, defeated. An item appears from the corpse...</p>
-        <div className="hpBar">
-        {drawHpBar(hp)}
+        <div className="menuBox" id="enemyPic">
+        <div className="menuHeader"><h3>Loot</h3></div>
+          <ul className="listNoStyle">
+          <li>{nameTheItem(itemOnGround)}</li>
+          <li>{makeButton(itemOnGround,this.props.handleClick)}</li>
+          <li>{makeDismantleButton(itemOnGround,this.props.handleClick)}</li>
+          </ul>
         </div>
-        <div className="hpBar">
-        {drawMpBar(mp)}
-        </div>
-      </div>
-    )};
+      );};
   }
 }
 

@@ -7,7 +7,7 @@ class MoveAnimation extends Component {
       <div className="menuBox" id="combatLog">
         <Button name="Clear Log" key="eq" handleClick={this.props.handleClick}/>
         <textarea
-        id="combatLog"
+        id="combatLogText"
         value={this.props.log}
         >
         </textarea>

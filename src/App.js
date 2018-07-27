@@ -38,7 +38,7 @@ class App extends Component {
       playerSkills: {freePoints:1,armorBreak:0,stun:0,spikedArmor:0,arrow:0,dodge:0,flee:0,heatLance:0,eatShard:0,manaBurn:0},
       enemyStats: {hp:0, maxHp: 0, mp: 0, maxMp: 0, baseDmg:0,def:0,difficulty:0, dex:0},
       enemyType: {},
-      enemyMoves: {},
+      enemyMove: "",
       enemyStunned: false,
       arrowsFired:0,
       enemiesDefeated: 0,
@@ -1301,7 +1301,7 @@ addSkillPoint = function(slot){
         <div className="grid-container">
         <CharPic playerStats={this.state.playerStats} handleClick={this.handleClick} playerClass={this.state.playerClass}/>
         <MoveAnimation log={this.state.combatLog} handleClick={this.handleClick} />
-        <EnemyPic handleClick={this.handleClick} enemyStats={this.state.enemyStats} battleState={this.state.battleState} enemyType={this.state.enemyType} playerClass={this.state.playerClass} chestOpen={this.state.chestOpen}/>
+        <EnemyPic handleClick={this.handleClick} enemyStats={this.state.enemyStats} battleState={this.state.battleState} enemyType={this.state.enemyType} playerClass={this.state.playerClass} chestOpen={this.state.chestOpen}itemOnGround={this.state.itemOnGround}/>
         <Items handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>
         <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats} playerSkills={this.state.playerSkills} playerClass={this.state.playerClass} armorSpikes={this.state.armorSpikes} testingMode={this.state.testingMode}/>
         <Loot itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>
@@ -1317,8 +1317,7 @@ addSkillPoint = function(slot){
         <PlayerStats stats={this.state.playerStats} eq={this.state.equipmentStats} playerClass={this.state.playerClass} actionCounter={this.state.actionCounter} enemiesDefeated={this.state.enemiesDefeated}/>
         <EnemyStats enemyStats={this.state.enemyStats} enemyType={this.state.enemyType} battleState={this.state.battleState} handleClick={this.handleClick}/>
         <Items handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>
-        <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats} playerSkills={this.state.playerSkills} playerClass={this.state.playerClass} armorSpikes={this.state.armorSpikes}  testingMode={this.state.testingMode}/>
-        <Loot itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>
+
 
         </div>
         </div>
