@@ -21,62 +21,40 @@ const drawMpBar=function(mp){
   }
   return mpBars;
 }
+const getCharPic=function(playerClass){
+  switch(true){
+    case playerClass==="Warrior":
+    return (<img src ={Warrior} className="characterPic"/>)
+    break;
+    case playerClass==="Rogue":
+    return (<img src ={Rogue} className="characterPic"/>)
+    break;
+    case playerClass==="Mage":
+    return (<img src ={Mage} className="characterPic"/>)
+    break;
+  }
+}
 
 class CharPic extends Component {
   render() {
     const hp=this.props.playerStats.hp;
     const mp = this.props.playerStats.mp;
-    if(this.props.playerClass==="Warrior"){
     return (
       <div className="menuBox" id="charPic">
-      <Button name="Equipment Menu" key="eq" handleClick={this.props.handleClick}/>
-      <br/>
-      <div className="hpBarAndText">
-        HP: {this.props.playerStats.hp}
-        <div className="hpBar">{drawHpBar(hp)}</div>
+      <div className="enemyPicGrid">
+      <div className="charPicHolder">{getCharPic(this.props.playerClass)}
       </div>
-      <div className="hpBarAndText">
-       MP: {this.props.playerStats.mp}
-      <div className="hpBar">{drawMpBar(mp)}</div>
+      <div id="playerHpText">HP: {this.props.playerStats.hp}
       </div>
-        <div className="charPicHolder">{<img src={Warrior} className="characterPic" />}</div>
+      <div className="hpBar" id="playerHp">{drawHpBar(hp)}
+      </div>
+      <div id="playerMpText">MP: {this.props.playerStats.mp}
+      </div>
+      <div className="mpBar" id="playerMp">{drawMpBar(mp)}
+      </div>
+      </div>
       </div>
     );
-  }
-  if(this.props.playerClass==="Rogue"){
-  return (
-    <div className="menuBox" id="charPic">
-    <Button name="Equipment Menu" key="eq" handleClick={this.props.handleClick}/>
-    <br/>
-    <div className="hpBarAndText">
-      HP: {this.props.playerStats.hp}
-      <div className="hpBar">{drawHpBar(hp)}</div>
-    </div>
-    <div className="hpBarAndText">
-     MP: {this.props.playerStats.mp}
-    <div className="hpBar">{drawMpBar(mp)}</div>
-    </div>
-      <div className="charPicHolder">{<img src={Rogue} className="characterPic" />}</div>
-    </div>
-  );
-}
-if(this.props.playerClass==="Mage"){
-return (
-  <div className="menuBox" id="charPic">
-  <Button name="Equipment Menu" key="eq" handleClick={this.props.handleClick}/>
-  <br/>
-    <div className="hpBarAndText">
-      HP: {this.props.playerStats.hp}
-      <div className="hpBar">{drawHpBar(hp)}</div>
-    </div>
-    <div className="hpBarAndText">
-     MP: {this.props.playerStats.mp}
-    <div className="hpBar">{drawMpBar(mp)}</div>
-    </div>
-    <div className="charPicHolder">{<img src={Mage} className="characterPic" />}</div>
-  </div>
-);
-}
   }
 }
 

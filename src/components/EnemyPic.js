@@ -137,15 +137,15 @@ class EnemyPic extends Component {
     return (
       <div className="menuBox" id="enemyPic">
       <div className="enemyPicGrid">
-      <div className="hpText">
+      <div id="enemyHpText">
       HP: {this.props.enemyStats.hp}
       </div>
-      <div className="hpBar">{drawHpBar(hp)}
+      <div id="enemyHpBarHolder"><div className="hpBar" id="enemyHpBar">{drawHpBar(hp)}</div>
       </div>
-      <div className="mpText">
+      <div id="enemyMpText">
       MP: {this.props.enemyStats.mp}
       </div>
-      <div className="mpBar">{drawMpBar(mp)}
+      <div className="mpBar" id="enemyMpBar">{drawMpBar(mp)}
       </div>
       <div className="enemyPicHolder">{enemyPicture(enemyType)}
       </div>

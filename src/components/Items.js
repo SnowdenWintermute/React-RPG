@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import InventoryItem from './InventoryItem'
 import Button from './Button'
+import Autoinjector from '../pics/eqMenuPics/autoinjector.png'
 
 //Name an Item. this is different from item on ground's version due to "Empty Slot"
 const nameTheItem = function(item){
@@ -36,12 +37,14 @@ const nameTheItem = function(item){
 const makeButton = function(item,handleClick,itemSlot) {
   if(item.type!==""){
     return(<Button name="⌁" handleClick={handleClick} itemSlot={itemSlot}/>)
+  }else{
+    return(<Button name="-" handleClick={handleClick}/>)
   }
 }
 const makeButtonEq = function(item,handleClick,itemSlot){
   if(item.type!==""){
     if(item.type==="1H Weapon"||item.type==="Shield"){
-    return(<div><Button name="▷" handleClick={handleClick} itemSlot={itemSlot}/>
+    return(<div className="onehEqButtonHolder"><Button name="▷" handleClick={handleClick} itemSlot={itemSlot}/>
     <Button name="◁" handleClick={handleClick} itemSlot={itemSlot}/></div>)
     }else{
     return(<Button name="△" handleClick={handleClick} itemSlot={itemSlot}/>)
@@ -71,15 +74,36 @@ class Items extends Component {
     let itemOnGround = this.props.itemOnGround
     return (
       <div className="menuBox" id="items">
-      <div className="menuHeader"><h3>Items</h3></div>
-        <ul className="listNoStyle" id="invItems">
-        {itemList(items,this.props.handleClick)}
-        </ul>
-        <ul className="listNoStyle" id="stackableItems">
-        <li>AutoInjectors: {this.props.inventory.autoInjectors}</li>
-        <li><Button name="Inject HP" handleClick={this.props.handleClick}/><Button name="Inject MP" handleClick={this.props.handleClick}/></li>
-        <li>Shards: {this.props.inventory.shards}</li>
-        </ul>
+        <div className="itemsGrid">
+          <div className="itemDiv" id="itemsHeader"><h3>Items</h3></div>
+          <div className="itemDiv" id="itemName1">{nameTheItem(this.props.inventory.inv1)}</div>
+          <div className="itemDiv" id ="itemButton1">{makeButton(this.props.inventory.inv1,this.props.handleClick,0)}
+          </div>
+          <div className="itemDiv" id ="itemEqButton1">{makeButtonEq(this.props.inventory.inv1,this.props.handleClick,0)}
+          </div>
+          <div className="itemDiv" id="itemName2">{nameTheItem(this.props.inventory.inv2)}</div>
+          <div className="itemDiv" id ="itemButton2">{makeButton(this.props.inventory.inv2,this.props.handleClick,1)}
+          </div>
+          <div className="itemDiv" id ="itemEqButton2">{makeButtonEq(this.props.inventory.inv2,this.props.handleClick,1)}
+          </div>
+          <div className="itemDiv" id="itemName3">{nameTheItem(this.props.inventory.inv3)}</div>
+          <div className="itemDiv" id ="itemButton3">{makeButton(this.props.inventory.inv3,this.props.handleClick,2)}
+          </div>
+          <div className="itemDiv" id ="itemEqButton3">{makeButtonEq(this.props.inventory.inv3,this.props.handleClick,2)}
+          </div>
+          <div className="itemDiv" id ="autoInjectors">AutoInjectors: {this.props.inventory.autoInjectors}
+          </div>
+          <div className="itemDiv" id ="shards">Shards: {this.props.inventory.shards}
+          </div>
+          <div className="itemDiv" id ="injectHp"><Button name="Inject HP" handleClick={this.props.handleClick}/>
+          </div>
+          <div className="itemDiv" id ="autoinjectorPicHolder"><img src={Autoinjector} id="autoinjectorPic"/>
+          </div>
+          <div className="itemDiv" id ="injectMp"><Button name="Inject MP" handleClick={this.props.handleClick}/>
+          </div>
+          <div className="itemDiv" id ="menuButtonHolder"><Button name="Menu" handleClick={this.props.handleClick}/>
+          </div>
+        </div>
       </div>
     );
   }

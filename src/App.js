@@ -1040,7 +1040,7 @@ addSkillPoint = function(slot){
 }
   //Handle the Buttons
   handleClick = function(buttonName,itemSlot){
-    if(buttonName!=="Equipment Menu"&&buttonName!=="Clear Log"&&buttonName!=="Battle Menu"&&buttonName!=="Start"){
+    if(buttonName!=="Menu"&&buttonName!=="Equipment Menu"&&buttonName!=="Clear Log"&&buttonName!=="Battle Menu"&&buttonName!=="Start"){
       let actionCounter = this.state.actionCounter
       actionCounter++
       this.setState({actionCounter})
@@ -1277,6 +1277,12 @@ addSkillPoint = function(slot){
           this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
         }
         break;
+        case buttonName==="Menu":
+          if(this.state.menuPage===0){
+            this.setState({menuPage:1})
+          }else if(this.state.menuPage===1){
+            this.setState({menuPage:0})
+          }
       default:
       //do nothing
     }
@@ -1314,7 +1320,7 @@ addSkillPoint = function(slot){
         <div className="App">
         <div className="grid-container">
         <Equipment  handleClick={this.handleClick} inventory={this.state.inventory}/>
-        <PlayerStats stats={this.state.playerStats} eq={this.state.equipmentStats} playerClass={this.state.playerClass} actionCounter={this.state.actionCounter} enemiesDefeated={this.state.enemiesDefeated}/>
+        <PlayerStats stats={this.state.playerStats} eq={this.state.equipmentStats} playerClass={this.state.playerClass} actionCounter={this.state.actionCounter} enemiesDefeated={this.state.enemiesDefeated} battleState={this.state.battleState}/>
         <EnemyStats enemyStats={this.state.enemyStats} enemyType={this.state.enemyType} battleState={this.state.battleState} handleClick={this.handleClick}/>
         <Items handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>
 

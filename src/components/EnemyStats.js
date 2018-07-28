@@ -6,24 +6,25 @@ class EnemyStats extends Component {
     if(this.props.battleState.inCombat&&this.props.enemyStats.hp>0){
     return (
       <div className="menuBox" id="enemyStats">
-      <Button name="Battle Menu" handleClick={this.props.handleClick}/>
-      <div className="menuHeader"><h3>Enemy Stats</h3></div>
-      <ul className="listNoStyle">
-      <li>Type: {this.props.enemyType}
-      </li>
-      <li>Difficulty: {this.props.enemyStats.difficulty} / 6
-      </li>
-      <li>HP: {this.props.enemyStats.hp} / {this.props.enemyStats.maxHp}
-      </li>
-      <li>MP: {this.props.enemyStats.mp} / {this.props.enemyStats.maxMp}
-      </li>
-      <li>DMG: {this.props.enemyStats.baseDmg}
-      </li>
-      <li>DEF: {this.props.enemyStats.def}
-      </li>
-      <li>Armor Penetration: {Math.floor(this.props.enemyStats.dex/2)}
-      </li>
-      </ul>
+      <div className="statGrid">
+      <div id="enemyStatsHeader"><h3>Enemy Stats</h3></div>
+      <div className="statDiv" id="enemyType">Type: {this.props.enemyType}
+      </div>
+      <div className="statDiv" id="enemyLevel">Level: {this.props.enemyStats.difficulty*this.props.battleState.dlvl}
+      </div>
+      <div className="statDiv" id="enemyHp">HP: {this.props.enemyStats.hp} / {this.props.enemyStats.maxHp}
+      </div>
+      <div className="statDiv" id="enemyMp">MP: {this.props.enemyStats.mp} / {this.props.enemyStats.maxMp}
+      </div>
+      <div className="statDiv" id="enemyDmg">DMG: {this.props.enemyStats.baseDmg}
+      </div>
+      <div className="statDiv" id="enemyDef">DEF: {this.props.enemyStats.def}
+      </div>
+      <div className="statDiv" id="enemyArmorPen">Armor Penetration: {Math.floor(this.props.enemyStats.dex/2)}
+      </div>
+      <div className="statDiv" id="enemyDifficulty">Difficulty: {this.props.enemyStats.difficulty} / 6
+      </div>
+      </div>
       </div>
           );
         }
