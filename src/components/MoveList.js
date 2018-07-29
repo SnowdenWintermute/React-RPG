@@ -26,8 +26,8 @@ const makeSkillPlusButton = function(key,handleClick,playerSkills){
       return(<Button name="+" handleClick={handleClick} itemSlot='0' />)
     }
     break;
-    case key==="dodge":
-    if(playerSkills.dodge<3){
+    case key==="manaLeak":
+    if(playerSkills.manaLeak<3){
       return(<Button name="+" handleClick={handleClick} itemSlot='1' />)
     }
     break;
@@ -46,8 +46,8 @@ const makeSkillPlusButton = function(key,handleClick,playerSkills){
       return(<Button name="+" handleClick={handleClick} itemSlot='1' />)
     }
     break;
-    case key==="manaBurn":
-    if(playerSkills.manaBurn<3){
+    case key==="weaken":
+    if(playerSkills.weaken<3){
       return(<Button name="+" handleClick={handleClick} itemSlot='2' />)
     }
     break;
@@ -98,37 +98,69 @@ class MoveList extends Component {
       </div>
     );
   }
-  if(this.props.playerClass==="Rogue"){
+  if(this.props.playerClass==="Mage"){
   return (
     <div className="menuBox" id="moveList">
-      <ul className="listNoStyle">
-      <div className="menuHeader"><h3>Moves</h3></div>
-        <li><Button name="Explore" key="explore" handleClick={this.props.handleClick}/></li>
-        <li><Button name="Attack" key="atk" handleClick={this.props.handleClick}/></li>
-        <li>Unspent points: {this.props.playerSkills.freePoints}</li>
-        <li><Button name="Arrow" key = "arrow" handleClick={this.props.handleClick}/>{makeSkillPlusButton("arrow",this.props.handleClick,this.props.playerSkills)}LV:{this.props.playerSkills.arrow}</li>
-        <li><Button name="Dodge" key = "dodge" handleClick={this.props.handleClick}/>{makeSkillPlusButton("dodge",this.props.handleClick,this.props.playerSkills)}LV:{this.props.playerSkills.dodge}</li>
-        <li><Button name="Flee" key = "flee" handleClick={this.props.handleClick}/>{makeSkillPlusButton("flee",this.props.handleClick,this.props.playerSkills)}LV:{this.props.playerSkills.flee}</li>
-
-      </ul>
-      {makeTestButton(this.props.testingMode,this.props.handleClick)}
+    <div id="moveListGrid">
+        <div className="moveDiv" id="explore"><Button name="Explore" key="explore" handleClick={this.props.handleClick}/>
+        </div>
+        <div className="moveDiv" id="attack"><Button name="Attack" key="atk" handleClick={this.props.handleClick}/>
+        </div>
+        <div className="moveDiv" id="unspentPoints">Unspent points: {this.props.playerSkills.freePoints}
+        </div>
+        <div className="moveDiv" id="skill1"><Button name="Heat Lance" key = "heatLance" handleClick={this.props.handleClick}/>
+        </div>
+        <div className="moveDiv" id="plusButton1">{makeSkillPlusButton("heatLance",this.props.handleClick,this.props.playerSkills)}
+        </div>
+        <div className="moveDiv" id="skill1lvl">LV:{this.props.playerSkills.heatLance}
+        </div>
+        <div className="moveDiv" id="skill2"><Button name="Eat Shard" key = "eatShard" handleClick={this.props.handleClick}/>
+        </div>
+        <div className="moveDiv" id="plusButton2">{makeSkillPlusButton("eatShard",this.props.handleClick,this.props.playerSkills)}
+        </div>
+        <div className="moveDiv" id="skill2lvl">LV:{this.props.playerSkills.eatShard}
+        </div>
+        <div className="moveDiv" id="skill3"><Button name="Weaken" key = "weaken" handleClick={this.props.handleClick}/>
+        </div>
+        <div className="moveDiv" id="plusButton3">{makeSkillPlusButton("weaken",this.props.handleClick,this.props.playerSkills)}
+        </div>
+        <div className="moveDiv" id="skill3lvl">LV:{this.props.playerSkills.weaken}
+        </div>
+      </div>
+      {/*makeTestButton(this.props.testingMode,this.props.handleClick)*/}
     </div>
   );
 }
-if(this.props.playerClass==="Mage"){
+if(this.props.playerClass==="Rogue"){
 return (
   <div className="menuBox" id="moveList">
-    <ul className="listNoStyle">
-    <div className="menuHeader"><h3>Moves</h3></div>
-      <li><Button name="Explore" key="explore" handleClick={this.props.handleClick}/></li>
-      <li><Button name="Attack" key="atk" handleClick={this.props.handleClick}/></li>
-      <li><Button name="Test" key="test" handleClick={this.props.handleClick}/></li>
-      <li>Unspent points: {this.props.playerSkills.freePoints}</li>
-      <li><Button name="Heat Lance" key = "heatLance" handleClick={this.props.handleClick}/>{makeSkillPlusButton("heatLance",this.props.handleClick,this.props.playerSkills)}LV:{this.props.playerSkills.heatLance}</li>
-      <li><Button name="Eat Shard" key = "eatShard" handleClick={this.props.handleClick}/>{makeSkillPlusButton("eatShard",this.props.handleClick,this.props.playerSkills)}LV:{this.props.playerSkills.eatShard}</li>
-      <li><Button name="Mana Burn" key = "manaBurn" handleClick={this.props.handleClick}/>{makeSkillPlusButton("manaBurn",this.props.handleClick,this.props.playerSkills)}LV:{this.props.playerSkills.manaBurn}</li>
-
-    </ul>
+  <div id="moveListGrid">
+      <div className="moveDiv" id="explore"><Button name="Explore" key="explore" handleClick={this.props.handleClick}/>
+      </div>
+      <div className="moveDiv" id="attack"><Button name="Attack" key="atk" handleClick={this.props.handleClick}/>
+      </div>
+      <div className="moveDiv" id="unspentPoints">Unspent points: {this.props.playerSkills.freePoints}
+      </div>
+      <div className="moveDiv" id="skill1"><Button name="Arrow" key = "arrow" handleClick={this.props.handleClick}/>
+      </div>
+      <div className="moveDiv" id="plusButton1">{makeSkillPlusButton("arrow",this.props.handleClick,this.props.playerSkills)}
+      </div>
+      <div className="moveDiv" id="skill1lvl">LV:{this.props.playerSkills.arrow}
+      </div>
+      <div className="moveDiv" id="skill2"><Button name="Mana Leak" key = "manaLeak" handleClick={this.props.handleClick}/>
+      </div>
+      <div className="moveDiv" id="plusButton2">{makeSkillPlusButton("manaLeak",this.props.handleClick,this.props.playerSkills)}
+      </div>
+      <div className="moveDiv" id="skill2lvl">LV:{this.props.playerSkills.manaLeak}
+      </div>
+      <div className="moveDiv" id="skill3"><Button name="Flee" key = "flee" handleClick={this.props.handleClick}/>
+      </div>
+      <div className="moveDiv" id="plusButton3">{makeSkillPlusButton("flee",this.props.handleClick,this.props.playerSkills)}
+      </div>
+      <div className="moveDiv" id="skill3lvl">LV:{this.props.playerSkills.flee}
+      </div>
+    </div>
+    {/*makeTestButton(this.props.testingMode,this.props.handleClick)*/}
   </div>
 );
 }

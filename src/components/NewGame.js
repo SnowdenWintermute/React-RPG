@@ -66,47 +66,52 @@ class NewGame extends Component {
     if(this.state.warScreen){
       return(
         <div className="grid-container">
-        {classButtons}
-        <div className="menuBox" id="classDescriptions">
-        A Warrior relies on strength (str) to gain more health and damage. They
-        regenerate HP naturally.
-        <br/>
-        <br/>
-        [Choose Warrior]
-        <br/>
-        <Button name="Start" key="war" handleClick={this.props.handleClick}/>
-        </div>
+          {classButtons}
+          <div className="menuBox" id="classDescriptions">
+            <div className="startScreenGrid">
+              <div className="classInfo">A Warrior relies on strength (str) to gain more health and damage. They
+              regenerate HP naturally.
+              </div>
+              <div className="startButtonHolder">
+              <Button name="Start" key="war" handleClick={this.props.handleClick}/>
+              </div>
+              </div>
+            </div>
         </div>
       );
     }
     if(this.state.rogueScreen){
       return(
         <div className="grid-container">
-        {classButtons}
-        <div className="menuBox" id="classDescriptions">
-        Rogues use their dexterity (dex) to penetrate armor. They can pick the locks
-        on treasure chests.
-        <br/>
-        <br/>
-        [Choose Rogue]
-        <br/>
-        <Button name="Start" key="rogue" handleClick={this.props.handleClick}/>
-        </div>
+          {classButtons}
+          <div className="menuBox" id="classDescriptions">
+            <div className="startScreenGrid">
+              <div className="classInfo">
+              Rogues use their dexterity (dex) to penetrate armor. They can pick the locks
+              on treasure chests.
+              </div>
+              <div className="startButtonHolder">
+              <Button name="Start" key="rogue" handleClick={this.props.handleClick}/>
+              </div>
+              </div>
+            </div>
         </div>
       );
     }
     if(this.state.mageScreen){
       return(
         <div className="grid-container">
-        {classButtons}
-        <div className="menuBox" id="classDescriptions">
-        Mages have a natural mana shield. Intelligence (int) is their weapon of choice.
-        <br/>
-        <br/>
-        [Choose Mage]
-        <br/>
-        <Button name="Start" key="mage" handleClick={this.props.handleClick}/>
-        </div>
+          {classButtons}
+          <div className="menuBox" id="classDescriptions">
+            <div className="startScreenGrid">
+              <div className="classInfo">
+              Mages have a natural mana shield. Intelligence (int) is their weapon of choice.
+              </div>
+              <div className="startButtonHolder">
+              <Button name="Start" key="war" handleClick={this.props.handleClick}/>
+              </div>
+              </div>
+            </div>
         </div>
       );
     }

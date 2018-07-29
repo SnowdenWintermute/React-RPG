@@ -46,11 +46,15 @@ class CharPic extends Component {
       </div>
       <div id="playerHpText">HP: {this.props.playerStats.hp}
       </div>
+      <div id="playerHpBarHolder">
       <div className="hpBar" id="playerHp">{drawHpBar(hp)}
+      </div>
       </div>
       <div id="playerMpText">MP: {this.props.playerStats.mp}
       </div>
+      <div id="playerMpBarHolder">
       <div className="mpBar" id="playerMp">{drawMpBar(mp)}
+      </div>
       </div>
       </div>
       </div>

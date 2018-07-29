@@ -47,7 +47,7 @@ const makeButtonEq = function(item,handleClick,itemSlot){
     return(<div className="onehEqButtonHolder"><Button name="▷" handleClick={handleClick} itemSlot={itemSlot}/>
     <Button name="◁" handleClick={handleClick} itemSlot={itemSlot}/></div>)
     }else{
-    return(<Button name="△" handleClick={handleClick} itemSlot={itemSlot}/>)
+    return(<Button name="▽" handleClick={handleClick} itemSlot={itemSlot}/>)
   }
   }
 }

@@ -37,7 +37,7 @@ const nameTheItem = function(item){
 
 const makeButtonEq = function(item,handleClick,itemSlot,itemName){
   if(item.type!==""){
-    return(<Button name="▽" handleClick={handleClick} itemSlot={itemSlot} />)
+    return(<Button name="△" handleClick={handleClick} itemSlot={itemSlot} />)
   }else{
     return(<Button name="-" handleClick={handleClick} />)
   }

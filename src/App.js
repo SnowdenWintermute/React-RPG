@@ -11,14 +11,6 @@ import EnemyStats from './components/EnemyStats'
 import NewGame from './components/NewGame'
 import Loot from './components/Loot'
 
-import ItemsMobile from './components/ItemsMobile'
-import EquipmentMobile from './components/EquipmentMobile'
-import MobileNavButtons from './components/MobileNavButtons'
-import CharPicMobile from './components/CharPicMobile';
-import EnemyPicMobile from './components/EnemyPicMobile'
-import MoveListMobile from './components/MoveListMobile'
-import LootMobile from './components/LootMobile'
-
 import createLoot from './functions/itemFunctions/createLoot'
 
 
@@ -35,7 +27,7 @@ class App extends Component {
       playerClass:"",
       playerStats: {lvl: 1, hp: 0, maxHp: 0, mp: 0, maxMp: 0, baseDmg: 0,tDmg: 0},
       armorSpikes:0,
-      playerSkills: {freePoints:1,armorBreak:0,stun:0,spikedArmor:0,arrow:0,dodge:0,flee:0,heatLance:0,eatShard:0,manaBurn:0},
+      playerSkills: {freePoints:1,armorBreak:0,stun:0,spikedArmor:0,arrow:0,manaLeak:0,flee:0,heatLance:0,eatShard:0,weaken:0},
       enemyStats: {hp:0, maxHp: 0, mp: 0, maxMp: 0, baseDmg:0,def:0,difficulty:0, dex:0},
       enemyType: {},
       enemyMove: "",
@@ -730,7 +722,7 @@ putInInv = function(item){
       }else{
         enemyMp = enemyMp - playerNetDmg
       }
-      let tempLog = "Player hits Enemy for "+(playerDmg-enemyNetDef)+" ("+enemyNetDef+" defended)"+"\n";
+      let tempLog = "Player hits Enemy for "+(playerNetDmg)+" ("+enemyNetDef+" defended)"+"\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
     }
     else{
@@ -825,7 +817,56 @@ if(playerMove==="Arrow"){
   enemyStats.mp = enemyMp
   this.setState({enemyStats})
 }
+if(playerMove==="Mana Leak"){
+  let manaDmg = Math.floor((this.state.equipmentStats.dex/3)*(this.state.playerSkills.manaLeak))+this.state.playerSkills.manaLeak
+  let manaCost=4
+  switch(true){
+    case this.state.playerSkills.manaLeak===1:
+    manaCost = 4;
+    break;
+    case this.state.playerSkills.manaLeak===2:
+    manaCost = 3;
+    break;
+    case this.state.playerSkills.manaLeak===3:
+    manaCost = 2;
+    break;
+    default:
+  }
+  playerStats.mp-=manaCost
+  playerMp-=manaCost
+  this.setState({playerStats})
+  console.log(manaDmg)
+  enemyStats.mp-=manaDmg
+  enemyMp-=manaDmg
+  this.setState({enemyStats})
 
+  if(enemyType==="Mage"){
+    let spillOver = enemyMp - playerNetDmg
+    if(spillOver<=0){
+      enemyMp = 0
+      if(spillOver+enemyHp>=0){
+        enemyHp = enemyHp + spillOver
+      }else{
+        enemyHp = 0
+      }
+    }else{
+      enemyMp = enemyMp - playerNetDmg
+    }
+    let tempLog = "Player hits Enemy for "+(playerNetDmg)+" ("+enemyNetDef+" defended)"+"("+manaDmg+" MP destroyed)"+"\n";
+    this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+  }
+  else{
+  if(playerDmg-enemyNetDef>=0){
+    enemyHp= enemyHp - (playerDmg-enemyNetDef)
+  }
+  let tempLog = "Player hits Enemy for "+(playerNetDmg)+" ("+enemyNetDef+" defended)"+"("+manaDmg+" MP destroyed)"+"\n";
+  this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+}
+enemyStats.hp = enemyHp;
+enemyStats.mp = enemyMp
+this.setState({enemyStats})
+
+  }
 //Mage moves
   if(playerMove==="Heat Lance"){
     if(enemyType==="Mage"){
@@ -1007,7 +1048,7 @@ addSkillPoint = function(slot){
         playerSkills.freePoints-=1
         break;
         case slot==="1":
-        playerSkills.dodge+=1
+        playerSkills.manaLeak+=1
         playerSkills.freePoints-=1
         break;
         case slot==="2":
@@ -1028,7 +1069,7 @@ addSkillPoint = function(slot){
         playerSkills.freePoints-=1
         break;
         case slot==="2":
-        playerSkills.manaBurn+=1
+        playerSkills.weaken+=1
         playerSkills.freePoints-=1
         break;
         default:
@@ -1098,7 +1139,7 @@ addSkillPoint = function(slot){
       case buttonName==="Inject MP":
         this.useAutoinjector("mp")
         break
-      case buttonName==="△":
+      case buttonName==="▽":
         this.equipItem(itemSlot)
         break
       case buttonName==="▷":
@@ -1107,7 +1148,7 @@ addSkillPoint = function(slot){
       case buttonName==="◁":
         this.equipLeft(itemSlot)
         break
-      case buttonName==="▽":
+      case buttonName==="△":
         this.unEquip(itemSlot)
         break
       case buttonName==="Go down":
@@ -1283,6 +1324,28 @@ addSkillPoint = function(slot){
           }else if(this.state.menuPage===1){
             this.setState({menuPage:0})
           }
+        case buttonName==="Mana Leak":
+        if(this.state.battleState.inCombat&&this.state.playerSkills.manaLeak>0){
+        let manaCost = 4;
+        switch(true){
+          case this.state.playerSkills.manaLeak===1:
+          manaCost = 4;
+          break;
+          case this.state.playerSkills.manaLeak===2:
+          manaCost = 3;
+          break;
+          case this.state.playerSkills.manaLeak===3:
+          manaCost = 2;
+          break;
+          default:
+        }
+        if(this.state.playerStats.mp>=manaCost){
+          this.combat("Mana Leak")
+        }else{
+          let tempLog = "Not enough MP to use level "+(this.state.playerSkills.manaLeak)+" Mana Leak ("+manaCost+" required)."+"\n";
+          this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        }
+      }
       default:
       //do nothing
     }
