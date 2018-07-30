@@ -86,9 +86,36 @@ class NewGame extends Component {
           {classButtons}
           <div className="menuBox" id="classDescriptions">
             <div className="startScreenGrid">
+              <div className="className">
+              <h3>Rogue</h3>
+              </div>
               <div className="classInfo">
               Rogues use their dexterity (dex) to penetrate armor. They can pick the locks
               on treasure chests.
+              </div>
+              <div className="move1Name">
+              Arrow
+              </div>
+              <div className="move1Description">
+              Cost: 1 Shard per arrow. Shoot an arrow at the enemy that deals normal damage. The enemy can not retaliate. Level up increases the number of arrows you can shoot per battle.
+              </div>
+              <div className="move2Name">
+              Mana Leak
+              </div>
+              <div className="move2Description">
+              Cost: 4/3/2 MP. Destroy enemy MP equal to a fraction of your DEX, then deal normal damage. Leveling up increases fraction (1/3,2/3,3/3).
+              </div>
+              <div className="move3Name">
+              Flee
+              </div>
+              <div className="move3Description">
+              Cost: 4/3/2 MP. Escapes the battle. Leveling up decreases MP cost.
+              </div>
+              <div className="passiveName">
+              Lockpick
+              </div>
+              <div className="passiveDescription">
+              Use a shard instead of an autoinjector to pick the lock of a chest.
               </div>
               <div className="startButtonHolder">
               <Button name="Start" key="rogue" handleClick={this.props.handleClick}/>

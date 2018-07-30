@@ -10,6 +10,7 @@ import PlayerStats from './components/PlayerStats'
 import EnemyStats from './components/EnemyStats'
 import NewGame from './components/NewGame'
 import Loot from './components/Loot'
+import DeathScreen from './components/DeathScreen'
 
 import createLoot from './functions/itemFunctions/createLoot'
 
@@ -20,6 +21,7 @@ class App extends Component {
     this.state={
       testingMode:true,
       newGame:true,
+      dead:false,
       actionCounter:0,
       battleState:{inCombat:false,treasureRoom:false,stairs:true,timesExplored:0,timesExploredOnCurrentFloor:0,dlvl:1},
       menuPage:0,
@@ -318,7 +320,7 @@ openTreasureChest = function(){
   resolveCombat = function(){
     //handle death
     if(this.state.playerStats.hp<=0){
-      console.log("Player died");
+      this.setState({dead:true});
       let tempLog = "Player died.\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
     }
@@ -1106,6 +1108,7 @@ addSkillPoint = function(slot){
         this.setState({combatLog: ""})
         break
       case buttonName==="Start":
+        this.setState({dead:false})
         this.setState((prevState)=>{return{newGame:false}});
         console.log("startbutton "+JSON.stringify(this.state.playerStats))
         this.calculateStats(true)
@@ -1346,6 +1349,57 @@ addSkillPoint = function(slot){
           this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
         }
       }
+      break;
+      case buttonName==="Weaken":
+      if(this.state.battleState.inCombat&&this.state.playerSkills.weaken!==0){
+        let int = this.state.equipmentStats.int
+        let playerStats = this.state.playerStats
+        let enemyStats = this.state.enemyStats
+        let dmgReduction = Math.floor(int*(this.state.playerSkills.weaken/3))+this.state.playerSkills.weaken
+        let manaCost = this.state.playerSkills.weaken * 3
+        if(this.state.playerStats.mp>=manaCost){
+          playerStats.mp-=manaCost
+          this.setState({playerStats})
+          if((enemyStats.baseDmg - dmgReduction)>=0){
+            enemyStats.baseDmg -= dmgReduction;
+            this.setState({enemyStats})
+            let tempLog = "You weaken the enemy's DMG by "+dmgReduction+"."+"\n";
+            this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+          }else{
+            enemyStats.baseDmg=0
+            let tempLog = "You completely disarm the enemy."+"\n";
+            this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+            this.setState({enemyStats})
+          }
+        }else{
+          let tempLog = "Not enough MP to use level "+(this.state.playerSkills.weaken)+" Weaken ("+manaCost+" required)."+"\n";
+          this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        }
+      }
+      case buttonName==="Start Over":
+      this.setState({playerStats: {lvl: 1, hp: 0, maxHp: 0, mp: 0, maxMp: 0, baseDmg: 0,tDmg: 0}})
+      this.setState({enemyStats: {hp:0, maxHp: 0, mp: 0, maxMp: 0, baseDmg:0,def:0,difficulty:0, dex:0}})
+      this.setState({playerSkills: {freePoints:1,armorBreak:0,stun:0,spikedArmor:0,arrow:0,manaLeak:0,flee:0,heatLance:0,eatShard:0,weaken:0}})
+      this.setState({battleState:{inCombat:false,treasureRoom:false,stairs:true,timesExplored:0,timesExploredOnCurrentFloor:0,dlvl:1}})
+      this.setState({actionCounter:0})
+      this.setState({armorSpikes:0})
+      this.setState({enemiesDefeated: 0})
+      this.setState({inventory: {
+        mainHand: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
+        offHand: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
+        head: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
+        body: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
+        ring: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
+        inv1: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
+        inv2: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
+        inv3: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
+        autoInjectors:0,
+        shards:0
+    }})
+      this.setState({combatLog: ""})
+      this.setState({equipmentStats: {dmg:0,def:0,str:0,dex:0,int:0}})
+      this.setState({newGame:true})
+      break;
       default:
       //do nothing
     }
@@ -1363,6 +1417,12 @@ addSkillPoint = function(slot){
         <NewGame handleClick={this.handleClick} getClass={this.getClass} setStartingGear={this.setStartingGear} calculateStats={this.calculateStats}/>
       </div>
     )
+    if(this.state.dead)
+    return(
+      <div className="App">
+      <DeathScreen handleClick={this.handleClick}/>
+      </div>
+    )
     //Menu Page 1
     if(this.state.menuPage===0) //Menu Page 1
     return (
@@ -1373,7 +1433,6 @@ addSkillPoint = function(slot){
         <EnemyPic handleClick={this.handleClick} enemyStats={this.state.enemyStats} battleState={this.state.battleState} enemyType={this.state.enemyType} playerClass={this.state.playerClass} chestOpen={this.state.chestOpen}itemOnGround={this.state.itemOnGround}/>
         <Items handleClick={this.handleClick} inventory={this.state.inventory} itemOnGround={this.state.itemOnGround}/>
         <MoveList handleClick={this.handleClick} battleState={this.state.battleState} enemyStats={this.state.enemyStats} playerSkills={this.state.playerSkills} playerClass={this.state.playerClass} armorSpikes={this.state.armorSpikes} testingMode={this.state.testingMode}/>
-        <Loot itemOnGround={this.state.itemOnGround} handleClick={this.handleClick}/>
 
         </div>
       </div>)
