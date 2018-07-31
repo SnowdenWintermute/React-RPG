@@ -11,15 +11,16 @@ import EnemyStats from './components/EnemyStats'
 import NewGame from './components/NewGame'
 import Loot from './components/Loot'
 import DeathScreen from './components/DeathScreen'
-
 import createLoot from './functions/itemFunctions/createLoot'
 
+import ClickSound from './sounds/mouseClick.wav'
+import ErrorSound from './sounds/errorSound.mp3'
 
 class App extends Component {
   constructor(props){
     super(props);
     this.state={
-      testingMode:true,
+      testingMode:false,
       newGame:true,
       dead:false,
       actionCounter:0,
@@ -47,7 +48,7 @@ class App extends Component {
         inv1: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
         inv2: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
         inv3: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
-        autoInjectors:0,
+        autoInjectors:2,
         shards:0
     },
       chestOpen:false,
@@ -894,6 +895,7 @@ this.setState({enemyStats})
     this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
   }
   playerStats.mp -= this.state.playerSkills.heatLance*3
+  playerMp -= this.state.playerSkills.heatLance*3
   enemyStats.hp = enemyHp;
   enemyStats.mp = enemyMp
   this.setState({playerStats})
@@ -1083,6 +1085,10 @@ addSkillPoint = function(slot){
 }
   //Handle the Buttons
   handleClick = function(buttonName,itemSlot){
+    const clickSound = new Audio();
+    clickSound.src = ClickSound
+    const errorSound = new Audio();
+    errorSound.src = ErrorSound
     if(buttonName!=="Menu"&&buttonName!=="Equipment Menu"&&buttonName!=="Clear Log"&&buttonName!=="Battle Menu"&&buttonName!=="Start"){
       let actionCounter = this.state.actionCounter
       actionCounter++
@@ -1199,6 +1205,7 @@ addSkillPoint = function(slot){
     }else if(this.state.playerSkills.armorBreak!==0){
       let tempLog = "Not enough MP to use level "+this.state.playerSkills.armorBreak+" Armor Break (need "+(3)+")"+"\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      errorSound.play();
     }
   }
       break;
@@ -1210,6 +1217,7 @@ addSkillPoint = function(slot){
     }else if(this.state.playerSkills.stun!==0){
       let tempLog = "Not enough MP to use level "+this.state.playerSkills.stun+" Stun (need "+(3)+")"+"\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+      errorSound.play();
     }
   }
       break;
@@ -1231,6 +1239,7 @@ addSkillPoint = function(slot){
       }else{
         tempLog = "You have no shards to add to your armor."+"\n";
         this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        errorSound.play();
       }
         break;
         default:
@@ -1243,6 +1252,7 @@ addSkillPoint = function(slot){
       }else if(this.state.arrowsFired===this.state.playerSkills.arrow){
         let tempLog = "You can only fire "+(this.state.playerSkills.arrow)+" arrow(s) per battle."+"\n";
         this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        errorSound.play();
       }else{
         this.combat("Arrow")
         this.resolveCombat();
@@ -1278,6 +1288,7 @@ addSkillPoint = function(slot){
       }else{
         let tempLog = "Not enough MP to use level "+(this.state.playerSkills.flee)+" flee ("+mpCost+" required)."+"\n";
         this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        errorSound.play();
       }
       }
       break;
@@ -1289,6 +1300,7 @@ addSkillPoint = function(slot){
       }else if(this.state.playerSkills.heatLance>0&&this.state.battleState.inCombat){
         let tempLog = "Not enough MP to use level "+(this.state.playerSkills.heatLance)+" Heat Lance ("+(playerSkills.heatLance*3)+" required)."+"\n";
         this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+        errorSound.play();
       }
       break;
       case buttonName==="Eat Shard":
@@ -1319,6 +1331,7 @@ addSkillPoint = function(slot){
         }else if(this.state.playerSkills.eatShard!==0){
           let tempLog = "You have no shards."+"\n";
           this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+          errorSound.play();
         }
         break;
         case buttonName==="Menu":
@@ -1347,6 +1360,7 @@ addSkillPoint = function(slot){
         }else{
           let tempLog = "Not enough MP to use level "+(this.state.playerSkills.manaLeak)+" Mana Leak ("+manaCost+" required)."+"\n";
           this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+          errorSound.play();
         }
       }
       break;
@@ -1374,6 +1388,7 @@ addSkillPoint = function(slot){
         }else{
           let tempLog = "Not enough MP to use level "+(this.state.playerSkills.weaken)+" Weaken ("+manaCost+" required)."+"\n";
           this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+          errorSound.play();
         }
       }
       case buttonName==="Start Over":

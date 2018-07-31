@@ -13,7 +13,7 @@ class PlayerStats extends Component {
         </div>
         <div className="statDiv" id="playerMp">MP: {this.props.stats.mp} / {this.props.stats.maxMp}
         </div>
-        <div className="statDiv" id="playerDmg">DMG: {this.props.stats.tDmg} (ignore {(Math.floor(this.props.eq.dex/2))} armor)
+        <div className="statDiv" id="playerDmg">DMG: {this.props.stats.tDmg} ({(Math.floor(this.props.eq.dex/2))})
         </div>
         <div className="statDiv" id = "playerDef">DEF: {this.props.eq.def}
         </div>

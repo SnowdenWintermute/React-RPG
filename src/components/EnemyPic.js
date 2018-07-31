@@ -111,7 +111,7 @@ class EnemyPic extends Component {
       return(
         <div className="menuBox" id="enemyPic">
         <div className="enemyPicGrid">
-        <div id="stairsHeader">Stairs on DLVL:{this.props.battleState.dlvl}</div>
+        <div id="stairsHeader"><h3>Stairs on DLVL:{this.props.battleState.dlvl}</h3></div>
         {makeStairButtons(this.props.battleState.timesExplored,this.props.handleClick)}
         <div id="shardButtonHolder">
         <Button name="Trade shards" handleClick={this.props.handleClick}/>
@@ -121,7 +121,7 @@ class EnemyPic extends Component {
         </div>
         </div>
       )};
-    if(this.props.battleState.treasureRoom){
+    if(this.props.battleState.treasureRoom&&!this.props.chestOpen){
       return(
         <div className="menuBox" id="enemyPic">
         <div className="enemyPicGrid">
@@ -154,7 +154,7 @@ class EnemyPic extends Component {
       </div>
       </div>
     )};
-    if(this.props.battleState.inCombat&&this.props.enemyStats.hp<=0){
+    if((this.props.battleState.inCombat&&this.props.enemyStats.hp<=0)||this.props.chestOpen){
     const itemOnGround = this.props.itemOnGround;
     return (
       <div className="menuBox" id="enemyPic">
