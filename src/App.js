@@ -1771,6 +1771,7 @@ addSkillPoint = function(slot){
           errorSound.play();
         }
       }
+      break;
       case buttonName==="Start Over":
       this.setState({playerStats: {lvl: 1, hp: 0, maxHp: 0, mp: 0, maxMp: 0, baseDmg: 0,tDmg: 0}})
       this.setState({enemyStats: {hp:0, maxHp: 0, mp: 0, maxMp: 0, baseDmg:0,def:0,difficulty:0, dex:0}})

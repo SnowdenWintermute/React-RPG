@@ -22,7 +22,7 @@ class EnemyStats extends Component {
       </div>
       <div className="statDiv" id="enemyArmorPen">Armor Penetration: {Math.floor(this.props.enemyStats.dex/2)}
       </div>
-      <div className="statDiv" id="enemyDifficulty">Difficulty: {this.props.enemyStats.difficulty} / 6
+      <div className="statDiv" id="enemyDifficulty">Difficulty: {this.props.enemyStats.difficulty} / 4
       </div>
       </div>
       </div>
