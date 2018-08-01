@@ -50,7 +50,7 @@ class App extends Component {
         inv1: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
         inv2: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
         inv3: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
-        autoInjectors:2,
+        autoInjectors:1,
         shards:0
     },
       chestOpen:false,
@@ -1788,7 +1788,7 @@ addSkillPoint = function(slot){
         inv1: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
         inv2: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
         inv3: {type:"",dmg: 0, def: 0, str: 0, dex: 0, int: 0},
-        autoInjectors:0,
+        autoInjectors:1,
         shards:0
     }})
       this.setState({combatLog: ""})
