@@ -1025,14 +1025,14 @@ this.setState({enemyStats})
       }else{
         enemyMp = enemyMp - playerNetDmg + (Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3)))
       }
-      let tempLog = "Player hits Enemy for "+(playerNetDmg+(Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3))))+" ("+enemyNetDef+" defended)"+"\n";
+      let tempLog = "Heat Lance hits Enemy for "+(playerNetDmg+(Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3))))+" ("+enemyNetDef+" defended)"+"\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
     }
     else{
     if(playerDmg-enemyNetDef>=0){
       enemyHp= enemyHp - (playerNetDmg + (Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3))))
     }
-    let tempLog = "Player hits Enemy for "+(playerNetDmg+(Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3))))+" ("+enemyNetDef+" defended)"+"\n";
+    let tempLog = "Heat Lance hits Enemy for "+(playerNetDmg+(Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3))))+" ("+enemyNetDef+" defended)"+"\n";
     this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
   }
   playerStats.mp -= this.state.playerSkills.heatLance*3
