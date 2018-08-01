@@ -249,6 +249,9 @@ class NewGame extends Component {
             <div id="reachLevel10">
             Reach level 10 to win!
             </div>
+            <div id="signature">
+            Created with React.js by Mike Silverman (v1.0)
+            </div>
           </div>
         </div>
       </div>

@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import Button from './Button'
 
-//Draw the HP Bar
 
-class DeathScreen extends Component {
+class VictoryScreen extends Component {
   render() {
     return(
     <div className="deathScreen">
       <div className="deathScreenGrid">
         <div className="deathScreenItem" id="youDied">
-        <h3> You Died </h3>
+        <h3> You Win! </h3>
         </div>
         <div id="gameStatsHeader">
         Stats
@@ -32,4 +31,4 @@ class DeathScreen extends Component {
   }
 }
 
-export default DeathScreen;
+export default VictoryScreen;

@@ -44,13 +44,13 @@ class CharPic extends Component {
       <div className="enemyPicGrid">
       <div className="charPicHolder">{getCharPic(this.props.playerClass)}
       </div>
-      <div id="playerHpText">HP: {this.props.playerStats.hp}
+      <div id="playerHpText">HP: {this.props.playerStats.hp} / {this.props.playerStats.maxHp}
       </div>
       <div id="playerHpBarHolder">
       <div className="hpBar" id="playerHp">{drawHpBar(hp)}
       </div>
       </div>
-      <div id="playerMpText">MP: {this.props.playerStats.mp}
+      <div id="playerMpText">MP: {this.props.playerStats.mp} / {this.props.playerStats.maxMp}
       </div>
       <div id="playerMpBarHolder">
       <div className="mpBar" id="playerMp">{drawMpBar(mp)}

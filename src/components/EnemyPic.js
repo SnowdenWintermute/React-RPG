@@ -137,6 +137,12 @@ class EnemyPic extends Component {
     return (
       <div className="menuBox" id="enemyPic">
       <div className="enemyPicGrid">
+      <div id="enemyLvl">
+      LVL: {this.props.enemyStats.difficulty*this.props.battleState.dlvl}
+      </div>
+      <div id="enemyMove">
+      {this.props.enemyMove}
+      </div>
       <div id="enemyHpText">
       HP: {this.props.enemyStats.hp}
       </div>
