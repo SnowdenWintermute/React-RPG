@@ -13,6 +13,8 @@ import Loot from './components/Loot'
 import DeathScreen from './components/DeathScreen'
 import VictoryScreen from './components/VictoryScreen'
 import createLoot from './functions/itemFunctions/createLoot'
+import DeathCombatLog from './components/DeathCombatLog'
+import PatchNotes from './components/PatchNotes'
 
 import ClickSound from './sounds/mouseClick.wav'
 import ErrorSound from './sounds/errorSound.mp3'
@@ -837,8 +839,8 @@ putInInv = function(item){
   if(playerMove==="Armor Break"){
     //check skill level and take mp appropriately
     let skillLevel = this.state.playerSkills.armorBreak
-    playerStats.mp -= (3)
-    playerMp -= (3)
+    playerStats.mp -= (2)
+    playerMp -= (2)
     this.setState((prevState)=>{return{playerStats}})
     //reduce enemy defense
     if(enemyStats.def-Math.floor(equipmentStats.str*(skillLevel/3))>0){
@@ -888,8 +890,8 @@ putInInv = function(item){
   }
 //Stun
 if(playerMove==="Stun"){
-  playerStats.mp -= (3)
-  playerMp -= (3)
+  playerStats.mp -= (2)
+  playerMp -= (2)
   this.setState((prevState)=>{return{playerStats}})
   let skillLevel=this.state.playerSkills.stun
   let rStun = this.getRandomInt(1,7) * skillLevel
@@ -1014,7 +1016,7 @@ this.setState({enemyStats})
 //Mage moves
   if(playerMove==="Heat Lance"){
     if(enemyType==="Mage"){
-      let spillOver = enemyMp - playerNetDmg + (Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3)))
+      let spillOver = enemyMp - (playerNetDmg + Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3)))
       if(spillOver<=0){
         enemyMp = 0
         if(spillOver+enemyHp>=0){
@@ -1023,7 +1025,7 @@ this.setState({enemyStats})
           enemyHp = 0
         }
       }else{
-        enemyMp = enemyMp - playerNetDmg + (Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3)))
+        enemyMp = enemyMp - (playerNetDmg + Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3)))
       }
       let tempLog = "Heat Lance hits Enemy for "+(playerNetDmg+(Math.floor(equipmentStats.int*(this.state.playerSkills.heatLance/3))))+" ("+enemyNetDef+" defended)"+"\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
@@ -1141,6 +1143,7 @@ this.setState({enemyStats})
           let tempLog = "Enemy acid spines hit Player for "+(enemyNetDmg+mpCost)+" ("+playerNetDef+" defended)"+"\n";
           this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
         }else{
+          playerHp -= mpCost
           let tempLog = "Enemy acid spines hit Player for "+mpCost+"\n";
           this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
         }
@@ -1601,13 +1604,13 @@ addSkillPoint = function(slot){
       break;
       case buttonName==="Spiked Armor":
       switch(true){
-        case this.state.playerSkills.spikedArmor*5<=this.state.armorSpikes:
-        let tempLog = "You can not add more spikes to level "+this.state.playerSkills.spikedArmor+" Armor Spikes (max of "+5+" per lvl)"+"\n";
+        case this.state.playerSkills.spikedArmor*10<=this.state.armorSpikes:
+        let tempLog = "You can not add more spikes to level "+this.state.playerSkills.spikedArmor+" Armor Spikes (max of "+10+" per lvl)"+"\n";
         this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
         break;
-        case this.state.playerSkills.spikedArmor>0&&this.state.armorSpikes<(this.state.playerSkills.spikedArmor*5):
+        case this.state.playerSkills.spikedArmor>0&&this.state.armorSpikes<(this.state.playerSkills.spikedArmor*10):
         if(this.state.inventory.shards>0){
-        tempLog = "You add a shard to your Armor Spikes ("+(this.state.playerSkills.spikedArmor*5-this.state.armorSpikes-1)+" spots remaining)"+"\n";
+        tempLog = "You add a shard to your Armor Spikes ("+(this.state.playerSkills.spikedArmor*10-this.state.armorSpikes-1)+" spots remaining)"+"\n";
         this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
         let inventory = this.state.inventory
         inventory.shards --
@@ -1823,7 +1826,10 @@ addSkillPoint = function(slot){
     if(this.state.dead)
     return(
       <div className="App">
+      <div className="grid-container">
       <DeathScreen handleClick={this.handleClick} actionCounter={this.state.actionCounter} enemiesDefeated={this.state.enemiesDefeated}/>
+      <DeathCombatLog log={this.state.combatLog} handleClick={this.handleClick} />
+      </div>
       </div>
     )
     //Menu Page 1

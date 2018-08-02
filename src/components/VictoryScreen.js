@@ -20,7 +20,7 @@ class VictoryScreen extends Component {
         Enemies Slain: {this.props.enemiesDefeated}
         </div>
         <div id="creditsAndShoutouts">
-        Thank you to Art365, erretres, jcunanan05, AbdulMoiz, shimphillip on freeCodeCamp forums. Credit to Calciumtrice for the art. Made with React.js by Mike Silverman (SnowdenWintermute).
+        Thank you to Art365, erretres, jcunanan05, AbdulMoiz, shimphillip and SpaniardDev on freeCodeCamp forums. Credit to Calciumtrice for the art. Made with React.js by Mike Silverman (SnowdenWintermute).
         </div>
         <div className="deathScreenItem" id="startOverButtonHolder">
         <Button name="Start Over" handleClick={this.props.handleClick}/>

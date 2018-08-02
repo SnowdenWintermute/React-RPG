@@ -116,10 +116,6 @@ body{
 #mobileNavButtons{
   display: none;
 }
-ul li {
-  margin: 0px;
-  display: flex;
-}
 textarea{
   resize: none;
   height: 100%;
@@ -877,6 +873,19 @@ p {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 }
+#patchNotesHeader{
+  grid-column: 1/5;
+  grid-row:1/2;
+  background: #567;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#patchNotesList{
+  grid-column: 1/5;
+  grid-row: 2/8;
+  overflow-y: scroll;
+}
 .className{
   grid-column: 1/7;
   grid-row: 1/2;
@@ -1035,7 +1044,13 @@ p {
 }
 
 /*Death Screen*/
+#deathCombatLog{
+  grid-column: 1/13;
+  grid-row:1/2;
+}
 .deathScreen{
+  grid-column: 1/13;
+  grid-row:2/7;
   height: 100%;
   width:100%;
 }
