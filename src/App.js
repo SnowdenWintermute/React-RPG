@@ -1580,11 +1580,11 @@ addSkillPoint = function(slot){
       break;
       case buttonName==="Armor Break":
       if(this.state.battleState.inCombat&&this.state.enemyStats.hp>0){
-      if(this.state.playerStats.mp >= 3&&this.state.playerSkills.armorBreak!==0){
+      if(this.state.playerStats.mp >= 2&&this.state.playerSkills.armorBreak!==0){
       this.combat("Armor Break")
       this.resolveCombat();
     }else if(this.state.playerSkills.armorBreak!==0){
-      let tempLog = "Not enough MP to use level "+this.state.playerSkills.armorBreak+" Armor Break (need "+(3)+")"+"\n";
+      let tempLog = "Not enough MP to use level "+this.state.playerSkills.armorBreak+" Armor Break (need "+(2)+")"+"\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
       errorSound.play();
     }
@@ -1592,11 +1592,11 @@ addSkillPoint = function(slot){
       break;
       case buttonName==="Stun":
       if(this.state.battleState.inCombat&&this.state.enemyStats.hp>0){
-      if(this.state.playerStats.mp >= 3&&this.state.playerSkills.stun!==0){
+      if(this.state.playerStats.mp >= 2&&this.state.playerSkills.stun!==0){
       this.combat("Stun")
       this.resolveCombat();
     }else if(this.state.playerSkills.stun!==0){
-      let tempLog = "Not enough MP to use level "+this.state.playerSkills.stun+" Stun (need "+(3)+")"+"\n";
+      let tempLog = "Not enough MP to use level "+this.state.playerSkills.stun+" Stun (need "+(2)+")"+"\n";
       this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
       errorSound.play();
     }
