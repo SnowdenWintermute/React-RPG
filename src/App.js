@@ -399,6 +399,12 @@ tickPoison = function(){
     //tick regens
     this.tickRegens()
     this.tickPoison()
+    //handle death from poison dmg
+    if(this.state.playerStats.hp<=0){
+      this.setState({dead:true});
+      let tempLog = "Player died.\n";
+      this.setState((prevState)=>{return{combatLog: tempLog+prevState.combatLog}})
+    }
     //Handle monster Death, increment counter and print log
     if(this.state.enemyStats.hp<=0){
       let enemyStats = this.state.enemyStats

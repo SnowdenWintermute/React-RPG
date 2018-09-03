@@ -11,6 +11,11 @@ class PatchNotes extends Component {
         <h3>Patch Notes</h3>
         </div>
         <div id= "patchNotesList">
+        <p>Patch 1.12</p>
+          <ul>
+          <li>Reduced volume of error sound.</li>
+          <li>Fixed a bug that caused players to live through lethal poison damage.</li>
+          </ul>
         <p>Patch 1.11</p>
           <ul>
           <li>Fixed a bug that caused the start screen images to stretch on some devices.</li>

@@ -805,11 +805,11 @@ p {
 }
 #explore{
   grid-column: 1/7;
-  grid-row: 1/2;
+  grid-row: 2/3;
 }
 #attack{
   grid-column: 1/7;
-  grid-row: 2/3;
+  grid-row: 3/4;
 }
 #unspentPoints{
   display: flex;
@@ -817,7 +817,7 @@ p {
   align-items: center;
   background: #567;
   grid-column: 1/7;
-  grid-row: 3/4;
+  grid-row: 1/2;
 }
 #skill1{
   grid-column: 1/4;
