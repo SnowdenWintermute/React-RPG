@@ -70,7 +70,7 @@ class NewGame extends Component {
           this.setState({startScreen:true})
           this.setState({patchScreen:false})
           break
-        case buttonName === "v 1.1":
+        case buttonName === "v 1.12":
         this.setState({warScreen:false})
         this.setState({rogueScreen:false})
         this.setState({mageScreen:false})
@@ -99,15 +99,24 @@ class NewGame extends Component {
             <h3>Patch Notes</h3>
             </div>
             <div id= "patchNotesList">
+            <p>Patch 1.12</p>
+              <ul>
+              <li>Reduced volume of error sound.</li>
+              <li>Fixed a bug that caused players to live through lethal poison damage.</li>
+              </ul>
+            <p>Patch 1.11</p>
+              <ul>
+              <li>Fixed a bug that caused the start screen images to stretch on some devices.</li>
+              </ul>
             <p>Patch 1.1</p>
-            <ul>
-            <li>Fixed a bug where Heat Lance was healing blue enemies.</li>
-            <li>Fixed a bug where Acid Spines would not deal damage in some cases.</li>
-            <li>Added combat log to death screen.</li>
-            <li>Added patch notes page to welcome screen.</li>
-            <li>Reduced the MP cost of warrior skills from 3 to 2.</li>
-            <li>Increased the maximum Armor Spikes per level from 5 to 10.4</li>
-            </ul>
+              <ul>
+              <li>Fixed a bug where Heat Lance was healing blue enemies.</li>
+              <li>Fixed a bug where Acid Spines would not deal damage in some cases.</li>
+              <li>Added combat log to death screen.</li>
+              <li>Added patch notes page to welcome screen.</li>
+              <li>Reduced the MP cost of warrior skills from 3 to 2.</li>
+              <li>Increased the maximum Armor Spikes per level from 5 to 10.4</li>
+              </ul>
             </div>
             </div>
           </div>
@@ -254,7 +263,7 @@ class NewGame extends Component {
         <div className="menuBox" id="classDescriptions">
           <div className="startScreenGrid">
             <div id="welcomeTitle">
-            <h3>React RPG <Button name="v 1.1" handleClick={this.handleClick}/></h3>
+            <h3>React RPG <Button name="v 1.12" handleClick={this.handleClick}/></h3>
             </div>
             <div id="welcomeSubTitle">
             Welcome to the dungeon.
